@@ -17,4 +17,6 @@ namespace ForParts.Models.Budgetes
         public decimal TotalPrice { get; set; }
         public List<BudgetedProduct> Products { get; set; }
     }
+
+    //Hola
 }
