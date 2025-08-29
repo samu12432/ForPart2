@@ -3,29 +3,36 @@ using ForParts.DTOs.Invoice;
 using ForParts.Exceptions.Invoice;
 using ForParts.IRepository.Invoice;
 using ForParts.IService.Invoice;
-using ForParts.Models.Custumer;
+using ForParts.Models.Customers;
 using ForParts.Models.Enums;
 using ForParts.Models.Invoice;
 using InvoiceAlias = ForParts.Models.Invoice.Invoice;
 using ProductAlias = ForParts.Models.Product.Product;
-using CustomerAlias = ForParts.Models.Custumer.Customer;
+using CustomerAlias = ForParts.Models.Customers.Customer;
+using ForParts.IRepository.Customer;
 
 namespace ForParts.Service.Invoice
 {
     public class InvoiceService : IInvoiceService
     {
         private readonly IInvoiceRepository _invoiceRepo;
+        private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
 
-        public InvoiceService(IInvoiceRepository invoiceRepo, IMapper mapper)
+        public InvoiceService(IInvoiceRepository invoiceRepo,  IMapper mapper, ICustomerRepository customerRepository)
         {
             _invoiceRepo = invoiceRepo;
             _mapper = mapper;
+            _customerRepository = customerRepository;
         }
 
         public async Task<InvoiceDto> CrearFacturaAsync(InvoiceCreateDto dto)
         {
             //Validar al cliente?
+            var customer = await _customerRepository.GetByIdAsync(dto.CustomerId);
+
+            if (customer == null)
+                throw new InvoiceException("Cliente no encontrado.");
 
             var invoice = new InvoiceAlias
             {
@@ -37,7 +44,7 @@ namespace ForParts.Service.Invoice
                 InvoiceDescription = dto.InvoiceDescription,
                 InvoiceExpirationDate = dto.InvoiceExpirationDate,
                 CustomerId = dto.CustomerId,
-                Customer = CustomerAlias,
+                Customer = customer,
                 InvoiceState = InvoiceState.Pendiente,
                 Items = dto.Items.Select(i => new InvoiceItem
                 {

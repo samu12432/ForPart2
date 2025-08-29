@@ -10,11 +10,11 @@ namespace ForParts.IRepository.Product
         Task AddStockMovementAsync(ProductMovement nuevoMovimientoStock);
         Task<bool> ExistProductAsync(string codeProduct);
         Task<IEnumerable<ProductAlias>> GetAllAsync();
-        Task<IEnumerable<ProductAlias>> GetAllStockMovements();
+        Task<IEnumerable<ProductMovement>> GetAllStockMovements();
         Task<ProductAlias> GetProductByCodeAsync(string codeProduct);
         Task<IEnumerable<ProductAlias>> GetProductsUsingSupply(string codeSupply);
         Task<ProductAlias> GetProductWithSupplies(string codeProduct);
-        Task GetStockByCode(string codeSupply);
+        Task<int> GetStockByCode(string codeProduct);
         Task<bool> UpdateAsync(ProductAlias exist);
     }
 }

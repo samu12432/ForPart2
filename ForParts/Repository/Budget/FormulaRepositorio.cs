@@ -1,7 +1,7 @@
-﻿using API_REST_PROYECT.Data;
-using API_REST_PROYECT.Models.Budget;
+﻿using ForParts.Data;
+using ForParts.Models.Budgetes;
 
-namespace API_REST_PROYECT.Repository
+namespace ForParts.Repository
 {
     public class FormulaRepositorio
     {

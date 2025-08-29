@@ -23,6 +23,17 @@ using static Microsoft.SqlServer.Management.Sdk.Sfc.RequestObjectInfo;
 using System.Text.Json.Serialization;
 using ForParts.IRepository.Invoice;
 using ForParts.Repository.Invoice;
+using ForParts.IRepository.Customer;
+using ForParts.Repository.Customer;
+using ForParts.IRepository.Product;
+using ForParts.Repository.Product;
+using ForParts.IService.Client;
+using ForParts.IService.Invoice;
+using ForParts.Service.Invoice;
+using ForParts.IService.Product;
+using ForParts.Services.Product;
+using ForParts.Service.Client;
+using ProfileAlias = ForParts.Models.Supply.Profile;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +88,11 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped(typeof(ISupplyRepository<>), typeof(SupplyRepository<>));
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ISupplyExisting, SupplyRepository<ProfileAlias>>();
+builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Glass>>();
+builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Accessory>>();
 
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceEmailAuth, EmailAuthService>();
@@ -85,7 +101,13 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ISupplyService<ProfileDto>, ProfileService>();
 builder.Services.AddScoped<ISupplyService<AccessoryDto>, AccessoryService>();
 builder.Services.AddScoped<ISupplyService<GlassDto>, GlassService>();
+builder.Services.AddScoped<IZureoInvoiceService, ZureoInvoiceService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
+
+// Registrar IHttpClientFactory
+builder.Services.AddHttpClient();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<Token>();

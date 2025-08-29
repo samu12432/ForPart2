@@ -4,6 +4,7 @@ using ForParts.IService.Client;
 using InvoiceAlias = ForParts.Models.Invoice.Invoice;
 using Newtonsoft.Json;
 using System.Text;
+using ForParts.DTOs.Client;
 
 namespace ForParts.Service.Client
 {

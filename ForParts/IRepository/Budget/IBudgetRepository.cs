@@ -1,10 +1,11 @@
-﻿using API_REST_PROYECT.Models.Budget;
-using API_REST_PROYECT.Models.Products;
-
-namespace API_REST_PROYECT.IRepository
+﻿
+using ForParts.Models.Budgetes;
+//using ForParts.ForParts
+using budgets = ForParts.Models.Budgetes.Budget;
+namespace ForParts.IRepository
 {
     public interface IBudgetRepository
     {
-        Task<Budget?> Add(Budget presupuesto);
+        Task<budgets?> Add(budgets presupuesto);
     }
 }

@@ -1,23 +1,25 @@
-﻿using API_REST_PROYECT.DTOs.Budget;
-using API_REST_PROYECT.DTOs.Product;
-using API_REST_PROYECT.Exceptions.Budget;
-using API_REST_PROYECT.IRepository;
-using API_REST_PROYECT.IServices;
-using API_REST_PROYECT.Models.Client;
-using API_REST_PROYECT.Models.Enum;
-using API_REST_PROYECT.Models.Products;
+﻿using ForParts.DTOs.Budget;
+using ForParts.DTOs.Product;
+using ForParts.Exceptions.Budget;
+using ForParts.IRepository;
+using ForParts.IRepository.Budget;
+using ForParts.IService.Buget;
+using ForParts.IServices;
+using ForParts.Models.Customers;
+using ForParts.Models.Enums;
+using ForParts.Models.Product;
 using Microsoft.SqlServer.Management.Smo;
-using budgets = API_REST_PROYECT.Models.Budget.Budget;
+using budgets = ForParts.Models.Budgetes.Budget;
 
 namespace API_REST_PROYECT.Services.Budget
 {
     public class BudgetService : IBudgetService
     {
         private readonly IBudgetRepository RepoPresupuesto;
-        private readonly ICalculadoraPresupuesto CalculadoraPresupuesto;
+        private readonly IBudgetCalculator CalculadoraPresupuesto;
 
 
-        public BudgetService(IBudgetRepository repoPresupuesto, ICalculadoraPresupuesto calculadoraPresupuesto)
+        public BudgetService(IBudgetRepository repoPresupuesto, IBudgetCalculator calculadoraPresupuesto)
         {
             RepoPresupuesto = repoPresupuesto;
             CalculadoraPresupuesto = calculadoraPresupuesto;
@@ -26,30 +28,30 @@ namespace API_REST_PROYECT.Services.Budget
 
 
         //private readonly IBudgetRepository _budgetRepository;
-        public Task<budgets?> CreateBudgetAsync(BudgetCreateDto dto)
+        public async Task<budgets?> CreateBudgetAsync(BudgetCreateDto dto)
         {
             //Validamos nuevamente que no sea nulo el dto
-            if(dto == null)
+            if (dto == null)
                 throw new BudgetException("Datos invalidos");
 
-            var productosPresupuestados = new List<ProductoPresupuestado>();
+            var productosPresupuestados = new List<BudgetedProduct>();
             decimal precioTotalPresupuesto = 0;
 
             foreach (var prodDto in dto.Productos)
             {
 
-                switch (prodDto.Tipo)
+                switch (prodDto.TypeProduct)
                 {
-                    case ProductCategory.Ventana:
+                    case ProductType.Ventana:
 
-                        var productoVentana = CalcularVentana(prodDto);
-                        precioTotalPresupuesto += productoVentana.PrecioTotal;
+                        var productoVentana = await CalcularVentana(prodDto);
+                        precioTotalPresupuesto += productoVentana.TotalPrice;
                         productosPresupuestados.Add(productoVentana);
                         break;
 
-                    case ProductCategory.Puerta:
-                        var productoPuerta = CalcularPuerta(prodDto);
-                        precioTotalPresupuesto += productoPuerta.PrecioTotal;
+                    case ProductType.Puerta:
+                        var productoPuerta = await CalcularPuerta(prodDto);
+                        precioTotalPresupuesto += productoPuerta.TotalPrice;
                         productosPresupuestados.Add(productoPuerta);
                         break;
 
@@ -59,45 +61,47 @@ namespace API_REST_PROYECT.Services.Budget
             }
             var presupuesto = new budgets
             {
-                customer = new Customer
+                Customer = new Customer
                 {
-                    ClienteNombre = dto.Cliente.ClienteNombre,
-                    ClienteTelefono = dto.Cliente.ClienteTelefono,
-                    ClienteDireccion = dto.Cliente.ClienteDireccion
+                    Nombre = dto.Cliente.Nombre,
+                    Telefono = dto.Cliente.Telefono,
+                    DireccionFiscal = dto.Cliente.DireccionFiscal
+
                 },
-                Estado = StateBudget.Borrador,
-                Productos = productosPresupuestados,
-                PrecioTotal = precioTotalPresupuesto
+
+                State = StateBudget.Borrador,
+                Products = productosPresupuestados,
+                TotalPrice = precioTotalPresupuesto
             };
 
-            var pr = RepoPresupuesto.Add(presupuesto);
+            var pr = await RepoPresupuesto.Add(presupuesto);
             return pr;
         }
 
-        private ProductoPresupuestado CalcularVentana(ProductBudgetDto prodDto)
+        private async Task<BudgetedProduct> CalcularVentana(ProductBudgetDto prodDto)
         {
-            ProductoPresupuestado ventana;
-
+            BudgetedProduct ventana;
+           
 
             switch (prodDto.Serie)
             {
                 case SerieProfile.Serie_20:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaS20(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS20(prodDto);
                     return ventana;
                 case SerieProfile.Serie_25:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaS25(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS25(prodDto);
                     return ventana;
                 case SerieProfile.Linea_Probba:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaProbba(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaProbba(prodDto);
                     return ventana;
                 case SerieProfile.Linea_Gala:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaGala(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGala(prodDto);
                     return ventana;
                 case SerieProfile.Linea_Gala_CR:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(prodDto);
                     return ventana;
                 case SerieProfile.Linea_Summa:
-                    ventana = CalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(prodDto);
+                    ventana = await CalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(prodDto);
                     return ventana;
                 default:
                     throw new Exception("El tipo de producto no existe.");
@@ -106,10 +110,10 @@ namespace API_REST_PROYECT.Services.Budget
         }
 
 
-        private ProductoPresupuestado CalcularPuerta(ProductBudgetDto prodDto)
+        private async Task<BudgetedProduct> CalcularPuerta(ProductBudgetDto prodDto)
         {
 
-            ProductoPresupuestado puerta;
+            BudgetedProduct puerta;
 
 
             switch (prodDto.Serie)
@@ -117,22 +121,22 @@ namespace API_REST_PROYECT.Services.Budget
             ///HAY QUE CAMBIAR TODO A UN METODO QUE DEVUELVA UNA PUERTA CALCULADA.
             {
                 case SerieProfile.Serie_20:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaS20(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS20(prodDto);
                     return puerta;
                 case SerieProfile.Serie_25:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaS25(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS25(prodDto);
                     return puerta;
                 case SerieProfile.Linea_Probba:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaProbba(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaProbba(prodDto);
                     return puerta;
                 case SerieProfile.Linea_Gala:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaGala(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGala(prodDto);
                     return puerta;
                 case SerieProfile.Linea_Gala_CR:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(prodDto);
                     return puerta;
                 case SerieProfile.Linea_Summa:
-                    puerta = CalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(prodDto);
                     return puerta;
                 default:
                     throw new Exception("Tipo de producto no soportado.");

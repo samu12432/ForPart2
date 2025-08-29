@@ -1,18 +1,20 @@
-﻿using API_REST_PROYECT.DTOs.Product;
-using API_REST_PROYECT.IRepository;
-using API_REST_PROYECT.Models.Budget;
-using API_REST_PROYECT.Models.Enum;
-using API_REST_PROYECT.Models.Products;
-using API_REST_PROYECT.Models.Supplies;
-using API_REST_PROYECT.Supplies.Supply;
-using API_REST_PROYECT.Utils;
+﻿using ForParts.DTOs.Product;
+using ForParts.IRepository;
+using ForParts.IRepository.Budget;
+using ForParts.IRepository.Supply;
+using ForParts.Models.Budgetes;
+using ForParts.Models.Enums;
+using ForParts.Models.Product;
+using ForParts.Models.Supply;
+//using ForParts.Supplies.Supply;
+using ForParts.Utils;
 using NCalc;
 
-namespace API_REST_PROYECT.Repository
+namespace ForParts.Repository.Budget
 {
-    public class CalculadoraPresupuestoRepositorio : ICalculadoraPresupuesto
+    public class CalculadoraPresupuestoRepositorio : IBudgetCalculator
     {
-            private readonly IFormulaRepositorio RepoFormula;
+            private readonly IFormulaRepository RepoFormula;
 
             private readonly ISupplyRepository<Profile> _repoProfile;
             private readonly ISupplyRepository<Glass> _repoGlass;
@@ -24,7 +26,7 @@ namespace API_REST_PROYECT.Repository
 
             private readonly IHttpContextAccessor httpContext;
 
-            public CalculadoraPresupuestoRepositorio(IFormulaRepositorio repoFormula, IStockRepository repoStock,
+            public CalculadoraPresupuestoRepositorio(IFormulaRepository repoFormula, IStockRepository repoStock,
                 IWebHostEnvironment env, IHttpContextAccessor httpContext, ISupplyRepository<Profile> repoProfile,
                 ISupplyRepository<Glass> repoVidrio, ISupplyRepository<Accessory> repoAccesorios)
             {
@@ -38,26 +40,26 @@ namespace API_REST_PROYECT.Repository
             }
 
             //-----------------------VENTANAS
-            public ProductoPresupuestado CalcularPresupuestoVentanaGala(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoVentanaGala(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoVentanaGalaCR(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoVentanaGalaCR(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public async Task<ProductoPresupuestado> CalcularPresupuestoVentanaProbba(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoVentanaProbba(ProductBudgetDto prodDto)
             {
                 var insumos = new List<BudgetedSupply>();
                 decimal precioProducto = 0;
                 string[] codigosDePerfil = { "90020", "90028", "90027", "90021", "90025" };
                 foreach (string codigo in codigosDePerfil)
                 {
-                    Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.Tipo.ToString(), "Largo");
-                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Ancho, prodDto.Alto);
+                    Profile perfil = await _repoProfile.GetSupplyByCode(codigo);
+                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
+                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
                         "90025" => 4,
@@ -77,28 +79,28 @@ namespace API_REST_PROYECT.Repository
                     precioProducto += perfilInsumo.Subtotal;
                 }
                 //Calculo del vidrio
-                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.TipoVidrio, prodDto.EspesorVidrio, prodDto.Serie, prodDto.Tipo, prodDto.Ancho, prodDto.Alto);
+                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.GlassType, prodDto.GlassThickness, prodDto.Serie, prodDto.TypeProduct, prodDto.Width, prodDto.Heigth);
                 insumos.Add(vidrioInsumo);
                 precioProducto += vidrioInsumo.Subtotal;
                 // Recargo 14% si es negro o blanco
                 precioProducto = AplicarRecargoPorColor(prodDto.Color, precioProducto);
 
-                return new ProductoPresupuestado
+                return new BudgetedProduct
                 {
-                    Nombre = prodDto.Nombre,
-                    Ancho = prodDto.Ancho,
-                    Alto = prodDto.Alto,
+                    Name = prodDto.Name,
+                    Width = prodDto.Width,
+                    Heigth = prodDto.Heigth,
                     Color = prodDto.Color,
-                    Cantidad = prodDto.Cantidad,
-                    Tipo = prodDto.Tipo,
-                    Serie = prodDto.Serie,
-                    PrecioUnitario = precioProducto,
-                    PrecioTotal = precioProducto * prodDto.Cantidad,
-                    InsumosUtilizados = insumos
+                    Amount = prodDto.amount,
+                    ProductType = prodDto.TypeProduct,
+                    SerieProfile = prodDto.Serie,
+                    UnitPrice = precioProducto,
+                    TotalPrice = precioProducto * prodDto.amount,
+                    SuppliesUsed = insumos
                 };
             }
 
-            public async Task<ProductoPresupuestado> CalcularPresupuestoVentanaS25(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoVentanaS25(ProductBudgetDto prodDto)
             {
                 var insumos = new List<BudgetedSupply>();
                 decimal precioProducto = 0;
@@ -108,9 +110,9 @@ namespace API_REST_PROYECT.Repository
                 {
                     Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
 
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.Tipo.ToString(), "Largo");
+                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
 
-                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Ancho, prodDto.Alto);
+                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
                         "2501" => 2,
@@ -133,36 +135,36 @@ namespace API_REST_PROYECT.Repository
                 }
 
                 //Calculo del vidrio
-                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.TipoVidrio, prodDto.EspesorVidrio, prodDto.Serie, prodDto.Tipo, prodDto.Ancho, prodDto.Alto);
+                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.GlassType, prodDto.GlassThickness, prodDto.Serie, prodDto.TypeProduct, prodDto.Width, prodDto.Heigth);
                 insumos.Add(vidrioInsumo);
                 precioProducto += vidrioInsumo.Subtotal;
 
                 // Recargo 14% si es negro o blanco
                 precioProducto = AplicarRecargoPorColor(prodDto.Color, precioProducto);
 
-                return new ProductoPresupuestado
+                return new BudgetedProduct
                 {
-                    Nombre = prodDto.Nombre,
-                    Ancho = prodDto.Ancho,
-                    Alto = prodDto.Alto,
+                    Name = prodDto.Name,
+                    Width = prodDto.Width,
+                    Heigth = prodDto.Heigth,
                     Color = prodDto.Color,
-                    Cantidad = prodDto.Cantidad,
-                    Tipo = prodDto.Tipo,
-                    Serie = prodDto.Serie,
-                    PrecioUnitario = precioProducto,
-                    PrecioTotal = precioProducto * prodDto.Cantidad,
-                    InsumosUtilizados = insumos
+                    Amount = prodDto.amount,
+                    ProductType = prodDto.TypeProduct,
+                    SerieProfile = prodDto.Serie,
+                    UnitPrice = precioProducto,
+                    TotalPrice = precioProducto * prodDto.amount,
+                    SuppliesUsed = insumos
                 };
             }
 
-            public Task<ProductoPresupuestado> CalcularPresupuestoVentanaSumma(ProductBudgetDto prodDto)
+            public Task<BudgetedProduct> CalcularPresupuestoVentanaSumma(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
 
 
-            public async Task<ProductoPresupuestado> CalcularPresupuestoVentanaS20(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoVentanaS20(ProductBudgetDto prodDto)
             {
                 var insumos = new List<BudgetedSupply>();
                 decimal precioProducto = 0;
@@ -170,8 +172,8 @@ namespace API_REST_PROYECT.Repository
                 foreach (string codigo in codigosDePerfil)
                 {
                     Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.Tipo.ToString(), "Largo");
-                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Ancho, prodDto.Alto);
+                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
+                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
                         "201" => 4,
@@ -193,25 +195,25 @@ namespace API_REST_PROYECT.Repository
                 }
 
                 //Calculo del vidrio
-                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.TipoVidrio, prodDto.EspesorVidrio, prodDto.Serie, prodDto.Tipo, prodDto.Ancho, prodDto.Alto);
+                BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.GlassType, prodDto.GlassThickness, prodDto.Serie, prodDto.TypeProduct, prodDto.Width, prodDto.Heigth);
                 insumos.Add(vidrioInsumo);
                 precioProducto += vidrioInsumo.Subtotal;
 
                 // Recargo 14% si es negro o blanco
                 precioProducto = AplicarRecargoPorColor(prodDto.Color, precioProducto);
 
-                return new ProductoPresupuestado
+                return new BudgetedProduct
                 {
-                    Nombre = prodDto.Nombre,
-                    Ancho = prodDto.Ancho,
-                    Alto = prodDto.Alto,
+                    Name = prodDto.Name,
+                    Width = prodDto.Width,
+                    Heigth = prodDto.Heigth,
                     Color = prodDto.Color,
-                    Cantidad = prodDto.Cantidad,
-                    Tipo = prodDto.Tipo,
-                    Serie = prodDto.Serie,
-                    PrecioUnitario = precioProducto,
-                    PrecioTotal = precioProducto * prodDto.Cantidad,
-                    InsumosUtilizados = insumos
+                    Amount = prodDto.amount,
+                    ProductType = prodDto.TypeProduct,
+                    SerieProfile = prodDto.Serie,
+                    UnitPrice = precioProducto,
+                    TotalPrice = precioProducto * prodDto.amount,
+                    SuppliesUsed = insumos
                 };
 
 
@@ -225,25 +227,26 @@ namespace API_REST_PROYECT.Repository
 
                 string urlImagen = ImagenHelper.ObtenerUrl(codigo, httpContext.HttpContext.Request, env);
 
+               
                 return new BudgetedSupply
                 {
-                    CodigoInsumo = codigo,
-                    TipoInsumo = "Perfil",
-                    MedidaPorUnidad = largoEnCm.ToString("0.00"),
-                    Cantidad = cantidad,
-                    PrecioUnitario = precioPorKg,
+                    SupplyCode = codigo,
+                    TypeSupply = TypeSupply.Profile,
+                    UnitMeasure = largoEnCm.ToString("0.00"),
+                    amount = cantidad,
+                    UnityPrice = precioPorKg,
                     Subtotal = subtotal,
-                    FaltanteStock = faltante,
-                    ImagenUrl = urlImagen
+                    OutOfStock = faltante,
+                    ImageUrl = urlImagen
 
                 };
             }
 
             public BudgetedSupply CalcularVidrio(GlassType tipoVidrio, string espesor, SerieProfile serie,
-                 ProductCategory tipo, decimal ancho, decimal alto)
+                 ProductType tipo, decimal ancho, decimal alto)
             {
                 // Obtener el vidrio según tipo y espesor
-                Glass vidrio = _repoGlass.GetVidrioByTipo(tipoVidrio, espesor); //CAMBIAR LOGICA DE BUSQUEDA
+                Glass vidrio = _repoGlass.GetGlassByType(tipoVidrio, espesor); //CAMBIAR LOGICA DE BUSQUEDA
             if (vidrio == null)
                     throw new Exception($"No se encontró el vidrio '{tipoVidrio}' con espesor '{espesor}'.");
 
@@ -269,11 +272,11 @@ namespace API_REST_PROYECT.Repository
 
                 return new BudgetedSupply
                 {
-                    CodigoInsumo = vidrio.nameSupply,
-                    TipoInsumo = "Vidrio",
-                    MedidaPorUnidad = $"{anchoCalculado:0.00} x {altoCalculado:0.00}",
-                    Cantidad = 2, // Siempre 2 unidades
-                    PrecioUnitario = vidrio.priceSupply,
+                    SupplyCode = vidrio.nameSupply,
+                    TypeSupply = TypeSupply.Glass,
+                    UnitMeasure = $"{anchoCalculado:0.00} x {altoCalculado:0.00}",
+                    amount = 2, // Siempre 2 unidades
+                    UnityPrice = vidrio.priceSupply,
                     Subtotal = subtotal
                 };
             }
@@ -292,102 +295,102 @@ namespace API_REST_PROYECT.Repository
 
 
             //-----------------------PUERTAS
-            public ProductoPresupuestado CalcularPresupuestoPuertaS30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoPuertaS30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoPuertaMecal30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoPuertaMecal30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoPuertaProbba(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoPuertaProbba(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoPuertaGala(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoPuertaGala(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoPuertaSumma(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoPuertaSumma(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
             //-----------------------BATIENTE
-            public ProductoPresupuestado CalcularPresupuestoBatienteS30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoBatienteS30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoBatienteMecal30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoBatienteMecal30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoBatienteProbba(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct>  CalcularPresupuestoBatienteProbba(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoBatienteGala(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoBatienteGala(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoBatienteSumma(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoBatienteSumma(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
             //-----------------------TABAQUERA
-            public ProductoPresupuestado CalcularPresupuestoTabaqueraS30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraS30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoTabaqueraMecal30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraMecal30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoTabaqueraProbba(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraProbba(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoTabaqueraGala(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraGala(ProductBudgetDto prodDto)
             {   
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoTabaqueraSumma(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraSumma(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
             //-----------------------PROYECTANTE
-            public ProductoPresupuestado CalcularPresupuestoProyectanteS30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoProyectanteS30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoProyectanteMecal30(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoProyectanteMecal30(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoProyectanteProbba(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoProyectanteProbba(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoProyectanteGala(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoProyectanteGala(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
 
-            public ProductoPresupuestado CalcularPresupuestoProyectanteSumma(ProductBudgetDto prodDto)
+            public async Task<BudgetedProduct> CalcularPresupuestoProyectanteSumma(ProductBudgetDto prodDto)
             {
                 throw new NotImplementedException();
             }
@@ -401,17 +404,17 @@ namespace API_REST_PROYECT.Repository
                 return Convert.ToDecimal(resultado);
             }
             //public bool o
-            public bool TieneStockDisponible(string nombre, string color, decimal largoNecesario, int cantidadRequerida)
+            public bool TieneStockDisponible(string codeSupply, string color, decimal largoNecesario, int cantidadRequerida)
             {
                 // Paso 1: Buscar todos los perfiles que cumplen con los criterios
-                List<Profile> perfilesDisponibles = RepoStock.BuscarPerfilesDisponibles(nombre, color, largoNecesario);
+                List<Profile> perfilesDisponibles = RepoStock.GetAvailableProfiles(codeSupply, color, largoNecesario);
 
                 // Paso 2: Sumar stock disponible para cada uno
                 int stockTotalDisponible = 0;
 
                 foreach (var perfil in perfilesDisponibles)
                 {
-                    int stock = RepoStock.ConsultarCantidadDisponible(perfil.idSupply);
+                    int stock = RepoStock.GetAvailableQuantity(perfil.idSupply);
                     stockTotalDisponible += stock;
 
                     // Si ya alcanzamos la cantidad requerida, podemos salir antes
@@ -423,27 +426,27 @@ namespace API_REST_PROYECT.Repository
                 return stockTotalDisponible >= cantidadRequerida;
             }
 
-        ProductoPresupuestado ICalculadoraPresupuesto.CalcularPresupuestoVentanaS20(ProductBudgetDto dto)
+        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaS20(ProductBudgetDto dto)
         {
             throw new NotImplementedException();
         }
 
-        ProductoPresupuestado ICalculadoraPresupuesto.CalcularPresupuestoVentanaS25(ProductBudgetDto prodDto)
+        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaS25(ProductBudgetDto prodDto)
         {
             throw new NotImplementedException();
         }
 
-        Task<ProductoPresupuestado> ICalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(ProductBudgetDto prodDto)
+        Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaGalaCR(ProductBudgetDto prodDto)
         {
             throw new NotImplementedException();
         }
 
-        Task<ProductoPresupuestado> ICalculadoraPresupuesto.CalcularPresupuestoVentanaGala(ProductBudgetDto prodDto)
+        Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaGala(ProductBudgetDto prodDto)
         {
             throw new NotImplementedException();
         }
 
-        ProductoPresupuestado ICalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(ProductBudgetDto prodDto)
+        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaSumma(ProductBudgetDto prodDto)
         {
             throw new NotImplementedException();
         }

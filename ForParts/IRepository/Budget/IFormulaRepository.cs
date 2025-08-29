@@ -1,8 +1,8 @@
-﻿using API_REST_PROYECT.Models.Budget;
+﻿using ForParts.Models.Budgetes;
 
-namespace API_REST_PROYECT.IRepository
+namespace ForParts.IRepository.Budget
 {
-    public interface IFormulaRepositorio
+    public interface IFormulaRepository
     {
         Formula GetFormula(string codigoInsumo, string seriePerfil, string tipoProducto, string descripcion);
     }

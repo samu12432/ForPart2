@@ -1,7 +1,7 @@
-﻿using API_REST_PROYECT.Models.Enum;
-using API_REST_PROYECT.Models.Products;
+﻿using ForParts.Models.Enums;
+using ForParts.Models.Product;
 
-namespace API_REST_PROYECT.Models.Budget
+namespace ForParts.Models.Budgetes
 {
     public class Formula
     {
@@ -9,7 +9,7 @@ namespace API_REST_PROYECT.Models.Budget
         public string CodigoInsumo { get; set; } = string.Empty;// Ej: 201
         public string TipoInsumo { get; set; } = string.Empty;// Ej: Perfil, Vidrio
         public SerieProfile SeriePerfil { get; set; } // Ej: Serie20
-        public ProductCategory TipoProducto { get; set; } // Ej: Ventana, Puerta
+        public ProductType TipoProducto { get; set; } // Ej: Ventana, Puerta
         public string Expresion { get; set; } = string.Empty;// Ej: "(Ancho / 2) - 7"
         public string Descripcion { get; set; } = string.Empty;
     }

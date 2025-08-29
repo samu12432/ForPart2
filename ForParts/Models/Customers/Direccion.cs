@@ -1,4 +1,4 @@
-﻿namespace ForParts.Models.Customer
+﻿namespace ForParts.Models.Customers
 {
     public class Direccion
     {

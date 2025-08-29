@@ -1,8 +1,10 @@
-﻿using API_REST_PROYECT.Data;
-using API_REST_PROYECT.IRepository;
-using API_REST_PROYECT.Models.Budget;
+﻿using ForParts.Data;
+using ForParts.IRepository;
+using ForParts.IRepository.Budget;
+using ForParts.Models.Budgetes;
+using budgets = ForParts.Models.Budgetes.Budget;
 
-namespace API_REST_PROYECT.Repository
+namespace ForParts.Repository
 {
     public class BudgetRepository : IBudgetRepository
     {
@@ -13,6 +15,12 @@ namespace API_REST_PROYECT.Repository
             _context = context;
         }
 
-        public async Task<Budget?> Add(Budget presupuesto) => await _context.Budgets.Add(presupuesto);
+        public async Task<budgets?> Add(budgets presupuesto)
+        { 
+             await _context.Budgets.AddAsync(presupuesto);
+             await _context.SaveChangesAsync();
+
+            return presupuesto;
+        } 
     }
 }

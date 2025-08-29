@@ -1,4 +1,4 @@
-﻿using CustumerAlias = ForParts.Models.Custumer.Customer;
+﻿using CustumerAlias = ForParts.Models.Customers.Customer;
 using ForParts.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 

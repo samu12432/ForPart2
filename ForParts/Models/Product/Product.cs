@@ -20,6 +20,8 @@ namespace ForParts.Models.Product
         [Range(0.01, double.MaxValue)]
         public decimal productPrice { get; set; }
         public string imageUrl { get; set; } = string.Empty;
+        [Range(0, int.MaxValue)]
+        public int StockActual { get; set; } = 0;
 
         //Trazabilidad de los productos
         public bool IsActive { get; set; } = true;

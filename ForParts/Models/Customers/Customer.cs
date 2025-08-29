@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ForParts.Models.Customer;
 using static Microsoft.SqlServer.Management.Sdk.Sfc.OrderBy;
+//using ForParts.Models.Customers;
 
-namespace ForParts.Models.Custumer
+namespace ForParts.Models.Customers
 {
     [Table("Customers")]
     public class Customer

@@ -1,6 +1,7 @@
 ﻿
 using ForParts.Models.Auth;
-using ForParts.Models.Custumer;
+using ForParts.Models.Budgetes;
+using ForParts.Models.Customers;
 using ForParts.Models.Invoice;
 using ForParts.Models.Product;
 using ForParts.Models.Supply;
@@ -33,6 +34,11 @@ namespace ForParts.Data
         public DbSet<InvoiceItem> InvoiceItems { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductMovement> ProductMovements { get; set; }
+        //BUDGETS
+        public DbSet<Budget> Budgets { get; set; }
+
+        public DbSet<Formula> Formulas { get; set; }
 
 
 
@@ -88,6 +94,22 @@ namespace ForParts.Data
 
             modelBuilder.Entity<Customer>()
                 .OwnsOne(c => c.DireccionFiscal);
+            modelBuilder.Entity<SupplyNecessary>()
+.HasOne(sn => sn.supply)
+.WithMany()
+.HasForeignKey(sn => sn.supplyId);
+
+            modelBuilder.Entity<SupplyNecessary>()
+                .HasOne(sn => sn.Product)
+                .WithMany(p => p.ProductoInsumos)
+                .HasForeignKey(sn => sn.productId);
+
+           /* modelBuilder.Entity<Stock>()
+    .HasOne(st => st.Supply)
+    .WithOne(sp => sp.Stock)
+    .HasForeignKey<Stock>(st => st.SupplyId); // <- dependiente = Stock
+
+            */
         }
     }
 }

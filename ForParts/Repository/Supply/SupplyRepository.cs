@@ -1,5 +1,7 @@
 ﻿using ForParts.Data;
+using ForParts.Exceptions.Supply;
 using ForParts.IRepository.Supply;
+using ForParts.Models.Enums;
 using ForParts.Models.Supply;
 using Microsoft.EntityFrameworkCore;
 using SUPPLY = ForParts.Models.Supply.Supply;
@@ -66,6 +68,28 @@ namespace ForParts.Repositorys.Supply
                 .Where(s => codes.Contains(s.codeSupply))
                 .Select(s => s.codeSupply)
                 .ToListAsync();
+        }
+        public async Task<Profile?> GetByCodeAsync(string codigo)
+        {
+            return await _context.Supplies
+                .OfType<Profile>()                   // solo los derivadas Profile
+                .FirstOrDefaultAsync(p => p.codeSupply == codigo);
+            // Devuelve un Profile (subtipo), tipado como Supply
+        }
+
+
+        public Glass GetGlassByType(GlassType tipoVidrio, string espesor)
+        {
+            Glass vidrio = _context.Supplies
+                .OfType<Glass>()
+                .FirstOrDefault(v =>
+                    v.glassType == tipoVidrio &&
+                    v.glassThickness.ToLower() == espesor.ToLower());
+
+            if (vidrio == null)
+                throw new GlassException($"No se encontró un vidrio del tipo '{tipoVidrio}' y espesor '{espesor}'.");
+
+            return vidrio;
         }
     }
 }

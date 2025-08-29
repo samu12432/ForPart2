@@ -1,11 +1,11 @@
-﻿using API_REST_PROYECT.DTOs.Custumer;
-using API_REST_PROYECT.DTOs.Product;
+﻿using ForParts.DTOs.Customer;
+using ForParts.DTOs.Product;
 
-namespace API_REST_PROYECT.DTOs.Budget
+namespace ForParts.DTOs.Budget
 {
     public class BudgetCreateDto
     {
-        public CustumerDto Cliente { get; set; }
+        public CustomerDto Cliente { get; set; }
         public List<ProductBudgetDto> Productos { get; set; } 
     }
 }

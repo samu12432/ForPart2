@@ -2,6 +2,7 @@
 using ForParts.Data;
 using ForParts.IRepository.Invoice;
 using ForParts.Models.Enums;
+using ProductAlias = ForParts.Models.Product.Product;
 using Microsoft.EntityFrameworkCore;
 using InvoiceAlias = ForParts.Models.Invoice.Invoice;
 
@@ -56,6 +57,31 @@ namespace ForParts.Repository.Invoice
         {
             _context.Invoices.Update(invoice);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsProductInto(string codeProduct)
+        {
+            return await _context.Invoices
+                .SelectMany(i => i.Items)
+                .AnyAsync(item => item.Product.codeProduct == codeProduct);
+        }
+
+        public async Task<bool> ExistInInvoice(string codeSupply)
+        {
+            return await _context.Invoices
+                .SelectMany(i => i.Items)
+                .AnyAsync(item => item.Product.ProductoInsumos
+                    .Any(insumo => insumo.supply.codeSupply == codeSupply));
+        }
+
+        public async Task<IEnumerable<ProductAlias>> GetFacturadosByProductIds(List<int> productsId)
+        {
+            return await _context.Invoices
+                .SelectMany(i => i.Items)
+                .Where(item => productsId.Contains(item.Product.productId))
+                .Select(item => item.Product)
+                .Distinct()
+                .ToListAsync();
         }
     }
 }

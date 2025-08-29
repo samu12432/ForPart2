@@ -9,6 +9,8 @@ namespace ForParts.Models.Supply
         [Key]
         public int idStock { get; set; }
         public string codeSupply { get; set; } = string.Empty;
+
+        public int SupplyId {  get; set; }
         public Supply Supply { get; set; } = null!; 
         public int stockQuantity { get; set; }
         public DateTime stockCreate { get; set; }
