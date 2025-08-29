@@ -141,7 +141,7 @@ namespace API_REST_PROYECT.Services.Budget
                 default:
                     throw new Exception("Tipo de producto no soportado.");
             }
-
+            
         }
     }
 }
