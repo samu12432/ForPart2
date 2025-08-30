@@ -99,7 +99,7 @@ namespace ForParts.Service.Auth
 
 
         //LOGIN 
-        public async Task<string?> LoginUser(LoginDto dto)
+        public async Task<(string? token, User user)> LoginUser(LoginDto dto)
         {
             //Validamos que el dto no sea vacio
             if (dto == null) throw new Exception("Datos incorrectos.");
@@ -117,7 +117,7 @@ namespace ForParts.Service.Auth
 
             //Generamos un token y devolvemos para iniciar la sesion
             var t = _optionToken.GenerateToken(user);
-            return t;
+            return (t, user);
         }
 
 
