@@ -4,6 +4,7 @@ using ForParts.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForParts.Migrations
 {
     [DbContext(typeof(ContextDb))]
-    partial class ContextDbModelSnapshot : ModelSnapshot
+    [Migration("20250830142859_addSSeirProfileToProfile")]
+    partial class addSSeirProfileToProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -566,7 +569,8 @@ namespace ForParts.Migrations
                     b.HasKey("idSupply");
 
                     b.HasIndex("codeSupply")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("UQ_CodeSupply");
 
                     b.ToTable("Supply", (string)null);
 
@@ -608,13 +612,9 @@ namespace ForParts.Migrations
                 {
                     b.HasBaseType("ForParts.Models.Supply.Supply");
 
-                    b.Property<string>("CodeSupply")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("profileColor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("profileHeigth")
                         .HasColumnType("decimal(18,2)");
@@ -622,16 +622,11 @@ namespace ForParts.Migrations
                     b.Property<decimal>("profileWeigth")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("serieProfile")
+                    b.Property<int>("serirProfile")
                         .HasColumnType("int");
 
                     b.Property<decimal>("weigthMetro")
                         .HasColumnType("decimal(18,2)");
-
-                    b.HasIndex("CodeSupply", "profileColor")
-                        .IsUnique()
-                        .HasDatabaseName("UQ_CodeSupply_ProfileColor")
-                        .HasFilter("[CodeSupply] IS NOT NULL AND [profileColor] IS NOT NULL");
 
                     b.ToTable("Profile", (string)null);
                 });
