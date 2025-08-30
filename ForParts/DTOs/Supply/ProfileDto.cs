@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ForParts.IDto;
+using ForParts.Models.Enums;
 
 namespace ForParts.DTOs.Supply
 {
@@ -40,5 +41,8 @@ namespace ForParts.DTOs.Supply
         [Required(ErrorMessage = "El color es obligatorio.")]
         [StringLength(20)]
         public string profileColor { get; set; } = string.Empty;
+
+        [EnumDataType(typeof(SerieProfile), ErrorMessage = "La serie no es válida.")]
+        public SerieProfile serieProfile { get; set; } 
     }
 }

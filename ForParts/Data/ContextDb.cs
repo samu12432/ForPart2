@@ -71,11 +71,17 @@ namespace ForParts.Data
             modelBuilder.Entity<Accessory>().ToTable("Accessory");
 
             //Indice de busqueda por Sku
-            modelBuilder.Entity<Supply>()
-                .HasIndex(u => u.codeSupply)
+            modelBuilder.Entity<Profile>(e => 
+            {
+                e.HasIndex(p => new { p.CodeSupply, p.profileColor })
                 .IsUnique()
-                .HasDatabaseName("UQ_CodeSupply");
+                .HasDatabaseName("UQ_CodeSupply_ProfileColor");
+            });
+            modelBuilder.Entity<Supply>(e =>
+            { 
+                e.HasKey(p => p.idSupply);
 
+            });
             //Indice de busqueda por Sku
             modelBuilder.Entity<Stock>()
                 .HasIndex(u => u.codeSupply )
