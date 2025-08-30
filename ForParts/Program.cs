@@ -34,6 +34,12 @@ using ForParts.IService.Product;
 using ForParts.Services.Product;
 using ForParts.Service.Client;
 using ProfileAlias = ForParts.Models.Supply.Profile;
+using ForParts.IService.Buget;
+using ForParts.Services.Budget;
+using ForParts.IRepository;
+using ForParts.Repository;
+using ForParts.IRepository.Budget;
+using ForParts.Repository.Budget;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -93,6 +99,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplyExisting, SupplyRepository<ProfileAlias>>();
 builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Glass>>();
 builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Accessory>>();
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<IFormulaRepository, FormulaRepositorio>();
 
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceEmailAuth, EmailAuthService>();
@@ -104,6 +112,9 @@ builder.Services.AddScoped<ISupplyService<GlassDto>, GlassService>();
 builder.Services.AddScoped<IZureoInvoiceService, ZureoInvoiceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<IBudgetCalculator, CalculadoraPresupuestoRepositorio>();
+
 
 
 // Registrar IHttpClientFactory

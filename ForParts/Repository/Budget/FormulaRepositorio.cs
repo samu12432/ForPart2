@@ -1,9 +1,11 @@
 ﻿using ForParts.Data;
+using ForParts.IRepository.Budget;
 using ForParts.Models.Budgetes;
+using ForParts.Models.Enums;
 
 namespace ForParts.Repository
 {
-    public class FormulaRepositorio
+    public class FormulaRepositorio :IFormulaRepository
     {
         private readonly ContextDb Contexto;
 
@@ -11,13 +13,14 @@ namespace ForParts.Repository
         {
             Contexto = contexto;
         }
-        public Formula GetFormula(string codigoInsumo, string seriePerfil, string tipoProducto, string descripcion)
+        public Formula GetFormula(string codigoInsumo, int seriePerfil, int tipoProducto, string descripcion)
         {
+
             Formula formula = Contexto.Formulas
                 .FirstOrDefault(f =>
                     f.CodigoInsumo == codigoInsumo &&
-                    f.SeriePerfil.ToString() == seriePerfil &&
-                    f.TipoProducto.ToString() == tipoProducto &&
+                    ((int)f.SeriePerfil) == seriePerfil && //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+                    ((int)f.TipoProducto) == tipoProducto && //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
                     f.Descripcion == descripcion);
 
             if (formula == null)

@@ -11,7 +11,7 @@ using ForParts.Models.Product;
 using Microsoft.SqlServer.Management.Smo;
 using budgets = ForParts.Models.Budgetes.Budget;
 
-namespace API_REST_PROYECT.Services.Budget
+namespace ForParts.Services.Budget
 {
     public class BudgetService : IBudgetService
     {

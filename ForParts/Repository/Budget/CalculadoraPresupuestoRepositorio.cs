@@ -58,7 +58,8 @@ namespace ForParts.Repository.Budget
                 foreach (string codigo in codigosDePerfil)
                 {
                     Profile perfil = await _repoProfile.GetSupplyByCode(codigo);
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
+                    //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT   
+                    Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
                     decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
@@ -109,10 +110,10 @@ namespace ForParts.Repository.Budget
                 foreach (string codigo in codigosDePerfil)
                 {
                     Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
+                //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+                Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
 
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
-
-                    decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
+                decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
                         "2501" => 2,
@@ -166,13 +167,16 @@ namespace ForParts.Repository.Budget
 
             public async Task<BudgetedProduct> CalcularPresupuestoVentanaS20(ProductBudgetDto prodDto)
             {
+
                 var insumos = new List<BudgetedSupply>();
                 decimal precioProducto = 0;
                 string[] codigosDePerfil = { "201", "202", "216", "204", "205" };
                 foreach (string codigo in codigosDePerfil)
                 {
                     Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
-                    Formula formula = RepoFormula.GetFormula(codigo, prodDto.Serie.ToString(), prodDto.TypeProduct.ToString(), "Largo");
+
+                    //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+                    Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
                     decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                     int cantidad = codigo switch
                     {
@@ -250,9 +254,10 @@ namespace ForParts.Repository.Budget
             if (vidrio == null)
                     throw new Exception($"No se encontró el vidrio '{tipoVidrio}' con espesor '{espesor}'.");
 
-                // Obtener fórmulas de cálculo de medidas del vidrio
-                Formula formulaAlto = RepoFormula.GetFormula(tipoVidrio.ToString(), serie.ToString(), tipo.ToString(), "Alto");
-                Formula formulaAncho = RepoFormula.GetFormula(tipoVidrio.ToString(), serie.ToString(), tipo.ToString(), "Ancho");
+            // Obtener fórmulas de cálculo de medidas del vidrio
+            //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+            Formula formulaAlto = RepoFormula.GetFormula(tipoVidrio.ToString(), ((int)serie), ((int)tipo), "Alto");
+                Formula formulaAncho = RepoFormula.GetFormula(tipoVidrio.ToString(), ((int)serie), ((int)tipo), "Ancho");
 
                 if (formulaAlto == null || formulaAncho == null)
                     throw new Exception($"No se encontró fórmula para el vidrio '{tipoVidrio}' en la serie '{serie}' y tipo '{tipo}'.");
@@ -426,29 +431,6 @@ namespace ForParts.Repository.Budget
                 return stockTotalDisponible >= cantidadRequerida;
             }
 
-        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaS20(ProductBudgetDto dto)
-        {
-            throw new NotImplementedException();
-        }
-
-        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaS25(ProductBudgetDto prodDto)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaGalaCR(ProductBudgetDto prodDto)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaGala(ProductBudgetDto prodDto)
-        {
-            throw new NotImplementedException();
-        }
-
-        async Task<BudgetedProduct> IBudgetCalculator.CalcularPresupuestoVentanaSumma(ProductBudgetDto prodDto)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
