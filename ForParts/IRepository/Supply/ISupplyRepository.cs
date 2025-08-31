@@ -16,6 +16,8 @@ namespace ForParts.IRepository.Supply
 
         Task<bool> UpdateSupply<TEntity>(TEntity existing) where TEntity : SUPPLY;
         Task<Profile> GetByCodeAsync(string codigo);
-        Glass GetGlassByType(GlassType tipoVidrio, string espesor); 
+        Glass GetGlassByType(GlassType tipoVidrio, string espesor);
+
+        Task<bool> ExistSupplyById(int supplyid);
     }
 }
