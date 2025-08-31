@@ -6,6 +6,6 @@ namespace ForParts.DTOs.Budget
     public class BudgetCreateDto
     {
         public CustomerDto Cliente { get; set; }
-        public List<ProductBudgetDto> Productos { get; set; } 
+        public ProductBudgetDto Producto { get; set; } 
     }
 }

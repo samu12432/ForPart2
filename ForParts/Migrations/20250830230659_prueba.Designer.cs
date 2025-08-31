@@ -4,6 +4,7 @@ using ForParts.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForParts.Migrations
 {
     [DbContext(typeof(ContextDb))]
-    partial class ContextDbModelSnapshot : ModelSnapshot
+    [Migration("20250830230659_prueba")]
+    partial class prueba
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,9 +94,6 @@ namespace ForParts.Migrations
                     b.Property<int>("IdCustomer")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<int>("State")
                         .HasColumnType("int");
 
@@ -103,8 +103,6 @@ namespace ForParts.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Budgets");
                 });
@@ -273,6 +271,9 @@ namespace ForParts.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BudgetId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -303,6 +304,8 @@ namespace ForParts.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BudgetId");
 
                     b.ToTable("BudgetedProduct");
                 });
@@ -644,15 +647,7 @@ namespace ForParts.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ForParts.Models.Product.BudgetedProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ForParts.Models.Customers.Customer", b =>
@@ -728,6 +723,13 @@ namespace ForParts.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ForParts.Models.Product.BudgetedProduct", b =>
+                {
+                    b.HasOne("ForParts.Models.Budgetes.Budget", null)
+                        .WithMany("Products")
+                        .HasForeignKey("BudgetId");
+                });
+
             modelBuilder.Entity("ForParts.Models.Product.SupplyNecessary", b =>
                 {
                     b.HasOne("ForParts.Models.Supply.Supply", null)
@@ -796,6 +798,11 @@ namespace ForParts.Migrations
                         .HasForeignKey("ForParts.Models.Supply.Profile", "idSupply")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ForParts.Models.Budgetes.Budget", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("ForParts.Models.Invoice.Invoice", b =>
