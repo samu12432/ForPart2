@@ -170,8 +170,10 @@ namespace ForParts.Repository.Budget
 
                 var insumos = new List<BudgetedSupply>();
                 decimal precioProducto = 0;
-                string[] codigosDePerfil = { "201", "202", "216", "204", "205" };
-                foreach (string codigo in codigosDePerfil)
+            string[] codigosDePerfil = { "201", "202", "216", "204", "205" };
+            //string[] codigosDePerfil = { "201" };
+
+            foreach (string codigo in codigosDePerfil)
                 {
                     Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
 
@@ -225,7 +227,7 @@ namespace ForParts.Repository.Budget
 
             public BudgetedSupply CalcularPerfil(decimal largoEnCm, int cantidad, decimal precioPorKg, decimal pesoPorMetro, string codigo, bool faltante)
             {
-                decimal largoEnMetros = largoEnCm / 100;
+                decimal largoEnMetros = largoEnCm /100;
                 decimal totalMetros = largoEnMetros * cantidad;
                 decimal subtotal = Math.Round(totalMetros * pesoPorMetro * precioPorKg, 2);
 

@@ -15,8 +15,30 @@ namespace ForParts.Models.Budgetes
         public DateTime Date { get; set; } = DateTime.Now;
         public StateBudget State { get; set; }
         public decimal TotalPrice { get; set; }
-        public List<BudgetedProduct> Products { get; set; }
+        public BudgetedProduct Product { get; set; }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Hola
 }

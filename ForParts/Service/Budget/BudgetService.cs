@@ -34,47 +34,55 @@ namespace ForParts.Services.Budget
             if (dto == null)
                 throw new BudgetException("Datos invalidos");
 
-            var productosPresupuestados = new List<BudgetedProduct>();
+            //var productosPresupuestados = new List<BudgetedProduct>();
             decimal precioTotalPresupuesto = 0;
 
-            foreach (var prodDto in dto.Productos)
-            {
+            ProductBudgetDto productoAPresupuestar = dto.Producto;
 
-                switch (prodDto.TypeProduct)
+            BudgetedProduct productoPresupuestado = new BudgetedProduct();
+         
+                switch (productoAPresupuestar.TypeProduct)
                 {
                     case ProductType.Ventana:
 
-                        var productoVentana = await CalcularVentana(prodDto);
+                        var productoVentana = await CalcularVentana(productoAPresupuestar);
                         precioTotalPresupuesto += productoVentana.TotalPrice;
-                        productosPresupuestados.Add(productoVentana);
+                        productoPresupuestado = productoVentana;
                         break;
 
                     case ProductType.Puerta:
-                        var productoPuerta = await CalcularPuerta(prodDto);
+                        var productoPuerta = await CalcularPuerta(productoAPresupuestar);
                         precioTotalPresupuesto += productoPuerta.TotalPrice;
-                        productosPresupuestados.Add(productoPuerta);
+                        productoPresupuestado = productoPuerta;
                         break;
 
                     default:
                         throw new Exception("El tipo de producto no existe.");
                 }
-            }
+
             var presupuesto = new budgets
             {
                 Customer = new Customer
                 {
                     Nombre = dto.Cliente.Nombre,
                     Telefono = dto.Cliente.Telefono,
-                    DireccionFiscal = dto.Cliente.DireccionFiscal
+                    DireccionFiscal = dto.Cliente.DireccionFiscal,
+                    Identificador = dto.Cliente.Identificador,
+                    TipoDocumento = dto.Cliente.TipoDocumento,
+                    Email = dto.Cliente.Email
+                   
 
-                },
+                    },
 
                 State = StateBudget.Borrador,
-                Products = productosPresupuestados,
+                //Products = productosPresupuestados,
+                Product = productoPresupuestado,
                 TotalPrice = precioTotalPresupuesto
             };
 
+            var para_ver_presupuesto = presupuesto;
             var pr = await RepoPresupuesto.Add(presupuesto);
+            var para_ver = pr;
             return pr;
         }
 

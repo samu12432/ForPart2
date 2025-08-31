@@ -23,7 +23,7 @@ namespace ForParts.DTO.Product
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
         public decimal productPrice { get; set; }
 
-        public IFormFile? Image { get; set; }
+        public IFormFile Image { get; set; }
 
         public string? imageUrl { get; set; } = string.Empty;
 

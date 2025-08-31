@@ -2,6 +2,7 @@
 using ForParts.IRepository;
 using ForParts.IRepository.Budget;
 using ForParts.Models.Budgetes;
+using Microsoft.EntityFrameworkCore;
 using budgets = ForParts.Models.Budgetes.Budget;
 
 namespace ForParts.Repository
@@ -17,8 +18,17 @@ namespace ForParts.Repository
 
         public async Task<budgets?> Add(budgets presupuesto)
         { 
+
              await _context.Budgets.AddAsync(presupuesto);
-             await _context.SaveChangesAsync();
+             //await _context.SaveChangesAsync();
+
+            try { await _context.SaveChangesAsync(); }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine(ex.InnerException?.Message); // suele decir "Cannot insert the value NULL into column 'X'..."
+                throw;
+            }
+            
 
             return presupuesto;
         } 
