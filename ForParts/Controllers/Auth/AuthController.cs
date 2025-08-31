@@ -78,8 +78,13 @@ namespace ForParts.Controllers.Auth
             try
             {
                 (string? token, User user) = await _authService.LoginUser(dto);
+                
+                if(user != null)
+                {
+                    user.passwordHash = user.passwordSalt = null;
+                }
 
-                if (token == null)
+                if (string.IsNullOrEmpty(token))
                     return Unauthorized("Credenciales incorretas"); //Codigo 401
 
                 return Ok(new { token, user }); //Codigo 200
