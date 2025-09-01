@@ -23,6 +23,11 @@ namespace ForParts.Repositorys.Supply
         {
             return await _dbSet.AnyAsync(x => x.codeSupply == codeSupply);
         }
+        public async Task<bool> ExistSupplyById(int supplyid)
+        {
+            return await _dbSet.AnyAsync(x => x.idSupply == supplyid);
+        }
+
 
         public async Task<bool> AddAsync(TEntity newSupply)
         {

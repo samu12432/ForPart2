@@ -12,14 +12,14 @@ namespace ForParts.Utils
             var extensiones = new[] { ".jpg", ".png", ".jpeg", ".webp" };
 
             string? ruta = extensiones
-                .Select(ext => Path.Combine(env.WebRootPath, "imagenes", $"{codigo}{ext}"))
+                .Select(ext => Path.Combine(env.WebRootPath, "imgs/supplies", $"{codigo}{ext}"))
                 .FirstOrDefault(File.Exists);
 
             string archivo = ruta != null
                 ? Path.GetFileName(ruta)
                 : "default.jpg"; // Asegurate de tener esta imagen en wwwroot/imagenes
 
-            return $"{request.Scheme}://{request.Host}/imagenes/{archivo}";
+            return $"{request.Scheme}://{request.Host}/imgs/supplies/{archivo}";
         }
     }
 }

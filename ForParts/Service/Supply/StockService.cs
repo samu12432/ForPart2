@@ -43,10 +43,11 @@ namespace ForParts.Services.Supply
             if (dto == null) throw new StockException("Datos incorrectos.");
 
             //Validamos que el insumo ingresado exista
-            var supply = await _supplyRepository.ExistSupplyByCode(dto.codeSupply);
+            var supplyByCode = await _supplyRepository.ExistSupplyByCode(dto.codeSupply);
 
-            if (!supply)
-                throw new SupplyException("No se encontró algun insumo con el código " + dto.codeSupply + ".");
+            var supplyById = await _supplyRepository.ExistSupplyById(dto.SupplyId);
+            if (!supplyByCode && !supplyById)
+                throw new SupplyException("No se encontró algun insumo con el código " + dto.codeSupply + " y el id " + dto.codeSupply + ".");
 
             //Validamos que no exista un stock referente al codigo del articulo ingresado
             var exist = await _stockRepository.GetStockBySku(dto.codeSupply);
@@ -173,6 +174,8 @@ namespace ForParts.Services.Supply
         public async Task<IEnumerable<StockMovementDto>> GetAllStockMovements()
         {
             var movements = await _stockRepository.GetAllStockMovements();
+
+            
             return _mapper.Map<IEnumerable<StockMovementDto>>(movements);
         }
 
