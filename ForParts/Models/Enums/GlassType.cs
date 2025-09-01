@@ -3,7 +3,7 @@
     public enum GlassType
     {
         Transparente = 0,
-        Fantasia = 1,
+        Puntillado = 1,
         Laminado = 2,
         Miniboreal = 3,
         Templado = 4,

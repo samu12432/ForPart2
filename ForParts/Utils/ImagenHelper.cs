@@ -17,7 +17,7 @@ namespace ForParts.Utils
 
             string archivo = ruta != null
                 ? Path.GetFileName(ruta)
-                : "default.jpg"; // Asegurate de tener esta imagen en wwwroot/imagenes
+                : "default.png"; // Asegurate de tener esta imagen en wwwroot/imagenes
 
             return $"{request.Scheme}://{request.Host}/imgs/supplies/{archivo}";
         }

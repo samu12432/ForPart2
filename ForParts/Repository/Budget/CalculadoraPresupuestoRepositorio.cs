@@ -275,7 +275,7 @@ namespace ForParts.Repository.Budget
                 // Calcular el subtotal (precio por m²) con redondeo
                 decimal subtotal = Math.Round(anchoEnMetros * altoEnMetros * vidrio.priceSupply, 2);
 
-                string urlImagen = ImagenHelper.ObtenerUrl(vidrio.nameSupply, httpContext.HttpContext.Request, env);//LOGICA
+                string urlImagen = ImagenHelper.ObtenerUrl(vidrio.codeSupply, httpContext.HttpContext.Request, env);//LOGICA
 
                 return new BudgetedSupply
                 {
@@ -284,12 +284,14 @@ namespace ForParts.Repository.Budget
                     UnitMeasure = $"{anchoCalculado:0.00} x {altoCalculado:0.00}",
                     amount = 2, // Siempre 2 unidades
                     UnityPrice = vidrio.priceSupply,
-                    Subtotal = subtotal
+                    Subtotal = subtotal,
+                    ImageUrl = urlImagen,
+                    OutOfStock = false
                 };
             }
             public decimal AplicarRecargoPorColor(string color, decimal precioBase)
             {
-                string[] coloresConRecargo = new[] { "negro", "blanco" };
+                string[] coloresConRecargo = new[] { "negro", "blanco", "madera", "marron", "anolock" };
                 string colorNormalizado = color.Trim().ToLower();
 
                 if (coloresConRecargo.Contains(colorNormalizado))
