@@ -1,0 +1,38 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${SA_PASSWORD}"
+      MSSQL_PID: "Developer"
+      MSSQL_TCP_PORT: "1433"
+    ports:
+      - "1433:1433"            
+    volumes:
+      - mssql-data:/var/opt/mssql
+    
+    networks:
+      - appnet
+
+  api:
+    image: shober18/forparts
+    container_name: forparts-api
+    depends_on:
+      - sqlserver
+        #condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:8080"
+      
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};Encrypt=true;TrustServerCertificate=true;MultipleActiveResultSets=true"
+    ports:
+      - "${API_PORT}:8080" 
+    networks:
+      - appnet
+
+volumes:
+  mssql-data:
+
+networks:
+  appnet:
