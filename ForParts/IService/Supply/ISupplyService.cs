@@ -8,10 +8,14 @@ namespace ForParts.IServices.Supply
 
         Task<bool> DeleteSupplyAsync(string codeSupply);
 
-        Task<bool> updateSupply(EditSupplyDto codeSupply);
+        Task<bool> DeleteByCodeAsync(string codeSupply);
 
-        Task<bool> updateImageSupply(EditImageSupplyDto codeSupply);
+        Task<bool> UpdateDescriptionAsync(EditSupplyDto dto);
 
-        Task<bool> updatePriceSupply(EditPriceSupplyDto codeSupply);
+        Task<bool> UpdateImageAsync(EditImageSupplyDto dto);
+
+        Task<bool> UpdatePriceAsync(EditPriceSupplyDto dto);
+
+        Task<List<T>> GetAllAsync();
     }
 }

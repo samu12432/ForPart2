@@ -4,6 +4,6 @@
     {
         Alta,
         Baja,
-        Edición
+        Edicion
     }
 }

@@ -87,7 +87,7 @@ namespace ForParts.Services.Supply
             //Luego de actualizar al sistema el stock correspondiente, registramos el movimiento del mismo para futuras o posibles auditorias
             if (succes)
             {
-                await mappeoDeMovimiento(dto.codeSupply, dto.stockQuantity, TypeMovement.Edición);
+                await mappeoDeMovimiento(dto.codeSupply, dto.stockQuantity, TypeMovement.Edicion);
             }
 
             return succes;
