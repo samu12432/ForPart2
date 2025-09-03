@@ -21,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using static Microsoft.SqlServer.Management.Sdk.Sfc.RequestObjectInfo;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 using ForParts.IRepository.Invoice;
 using ForParts.Repository.Invoice;
 using ForParts.IRepository.Customer;
@@ -33,6 +34,10 @@ using ForParts.Service.Invoice;
 using ForParts.IService.Product;
 using ForParts.Services.Product;
 using ForParts.Service.Client;
+using ForParts.IRepository.Budget;
+using ForParts.Repository.Budget;
+using ForParts.IService.Buget;
+using ForParts.Service.Buget;
 using ProfileAlias = ForParts.Models.Supply.Profile;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,6 +85,10 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.Converters.Add(new ForParts.Converters.DireccionJsonConverter());
     });
 
 builder.Services.AddAuthorization();
@@ -104,6 +113,10 @@ builder.Services.AddScoped<ISupplyService<GlassDto>, GlassService>();
 builder.Services.AddScoped<IZureoInvoiceService, ZureoInvoiceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<IBudgetCalculator, CalculadoraPresupuestoRepositorio>();
+builder.Services.AddScoped<IFormulaRepository, FormulaRepositorio>();
 
 
 // Registrar IHttpClientFactory

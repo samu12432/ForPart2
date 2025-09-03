@@ -1,8 +1,8 @@
 ﻿
 using ForParts.Models.Budgetes;
-//using ForParts.ForParts
 using budgets = ForParts.Models.Budgetes.Budget;
-namespace ForParts.IRepository
+
+namespace ForParts.IRepository.Budget
 {
     public interface IBudgetRepository
     {

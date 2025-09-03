@@ -104,12 +104,16 @@ namespace ForParts.Data
                 .WithMany(p => p.ProductoInsumos)
                 .HasForeignKey(sn => sn.productId);
 
-           /* modelBuilder.Entity<Stock>()
-    .HasOne(st => st.Supply)
-    .WithOne(sp => sp.Stock)
-    .HasForeignKey<Stock>(st => st.SupplyId); // <- dependiente = Stock
-
-            */
+            // Configuración de la relación uno a uno entre Supply y Stock
+            modelBuilder.Entity<Stock>()
+                .HasOne(st => st.Supply)
+                .WithOne(sp => sp.Stock)
+                .HasForeignKey<Stock>(st => st.SupplyId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            // Asegurar que Stock tiene su clave primaria configurada
+            modelBuilder.Entity<Stock>()
+                .HasKey(s => s.idStock);
         }
     }
 }

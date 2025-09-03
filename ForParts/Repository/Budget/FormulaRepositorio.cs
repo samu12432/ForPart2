@@ -1,9 +1,10 @@
 ﻿using ForParts.Data;
+using ForParts.IRepository.Budget;
 using ForParts.Models.Budgetes;
 
-namespace ForParts.Repository
+namespace ForParts.Repository.Budget
 {
-    public class FormulaRepositorio
+    public class FormulaRepositorio : IFormulaRepository
     {
         private readonly ContextDb Contexto;
 

@@ -1,11 +1,15 @@
-﻿using ForParts.DTOs.Customer;
+using ForParts.DTOs.Customer;
 using ForParts.DTOs.Product;
+using System.ComponentModel.DataAnnotations;
 
 namespace ForParts.DTOs.Budget
 {
     public class BudgetCreateDto
     {
-        public CustomerDto Cliente { get; set; }
-        public List<ProductBudgetDto> Productos { get; set; } 
+        [Required(ErrorMessage = "El cliente es requerido")]
+        public CustomerDto Cliente { get; set; } = new CustomerDto();
+        
+        [Required(ErrorMessage = "Los productos son requeridos")]
+        public List<ProductBudgetDto> Productos { get; set; } = new List<ProductBudgetDto>();
     }
 }

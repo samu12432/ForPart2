@@ -11,7 +11,7 @@ using ForParts.Models.Product;
 using Microsoft.SqlServer.Management.Smo;
 using budgets = ForParts.Models.Budgetes.Budget;
 
-namespace API_REST_PROYECT.Services.Budget
+namespace ForParts.Service.Buget
 {
     public class BudgetService : IBudgetService
     {
@@ -63,10 +63,12 @@ namespace API_REST_PROYECT.Services.Budget
             {
                 Customer = new Customer
                 {
-                    Nombre = dto.Cliente.Nombre,
-                    Telefono = dto.Cliente.Telefono,
-                    DireccionFiscal = dto.Cliente.DireccionFiscal
-
+                    Nombre = dto.Cliente?.Nombre ?? string.Empty,
+                    Telefono = dto.Cliente?.Telefono ?? string.Empty,
+                    Email = dto.Cliente?.Email ?? string.Empty,
+                    Identificador = dto.Cliente?.Identificador ?? string.Empty,
+                    TipoDocumento = dto.Cliente?.TipoDocumento ?? "RUT",
+                    DireccionFiscal = dto.Cliente?.DireccionFiscal ?? new Direccion()
                 },
 
                 State = StateBudget.Borrador,
