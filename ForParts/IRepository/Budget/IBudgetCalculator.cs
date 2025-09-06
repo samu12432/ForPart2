@@ -15,7 +15,8 @@ namespace ForParts.IRepository.Budget
 
         //PUERTAS
         Task<BudgetedProduct> CalcularPresupuestoPuertaS30(ProductBudgetDto prodDto);
-        Task<BudgetedProduct> CalcularPresupuestoPuertaMecal30(ProductBudgetDto prodDto);
+        Task<BudgetedProduct> CalcularPresupuestoPuertaMecal30Interior(ProductBudgetDto prodDto);
+        Task<BudgetedProduct> CalcularPresupuestoPuertaMecal30Exterior(ProductBudgetDto prodDto);
 
         Task<BudgetedProduct> CalcularPresupuestoPuertaProbba(ProductBudgetDto prodDto);
 

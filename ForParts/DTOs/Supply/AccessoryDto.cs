@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ForParts.IDto;
+﻿using ForParts.IDto;
+using ForParts.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ForParts.DTOs.Supply
 {
@@ -34,5 +35,15 @@ namespace ForParts.DTOs.Supply
         [Required(ErrorMessage = "Es necesario ingresar una descripción del accesorio.")]
         [StringLength(100)]
         public string descriptionAccessory { get; set; } = string.Empty;
+
+        [EnumDataType(typeof(TypeAccessory), ErrorMessage = "El tipo de accesorio no es válido")]
+        public TypeAccessory typeAccessory { get; set; }
+
+        [EnumDataType(typeof(SerieProfile), ErrorMessage = "La serie no es válida")]
+        public SerieProfile serie { get; set; }
+
+        [Required(ErrorMessage = "Es necesario ingresar un color del accesorio.")]
+        [StringLength(100)]
+        public string color { get; set; } = string.Empty;
     }
 }

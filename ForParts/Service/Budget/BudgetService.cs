@@ -126,26 +126,15 @@ namespace ForParts.Services.Budget
 
             switch (prodDto.Serie)
 
-            ///HAY QUE CAMBIAR TODO A UN METODO QUE DEVUELVA UNA PUERTA CALCULADA.
+            
             {
-                case SerieProfile.Serie_20:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS20(prodDto);
-                    return puerta;
-                case SerieProfile.Serie_25:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaS25(prodDto);
+                case SerieProfile.Serie_30:
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoPuertaMecal30Interior(prodDto);
                     return puerta;
                 case SerieProfile.Linea_Probba:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaProbba(prodDto);
+                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoPuertaProbba(prodDto);
                     return puerta;
-                case SerieProfile.Linea_Gala:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGala(prodDto);
-                    return puerta;
-                case SerieProfile.Linea_Gala_CR:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaGalaCR(prodDto);
-                    return puerta;
-                case SerieProfile.Linea_Summa:
-                    puerta = await CalculadoraPresupuesto.CalcularPresupuestoVentanaSumma(prodDto);
-                    return puerta;
+              
                 default:
                     throw new Exception("Tipo de producto no soportado.");
             }
