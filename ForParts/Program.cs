@@ -37,7 +37,7 @@ using ForParts.Service.Client;
 using ForParts.IRepository.Budget;
 using ForParts.Repository.Budget;
 using ForParts.IService.Buget;
-using ForParts.Service.Buget;
+using ForParts.Services.Budget;
 using ProfileAlias = ForParts.Models.Supply.Profile;
 using ForParts.IService.Buget;
 using ForParts.Services.Budget;

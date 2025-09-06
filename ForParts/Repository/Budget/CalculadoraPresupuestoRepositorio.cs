@@ -291,10 +291,10 @@ namespace ForParts.Repository.Budget
                     {
                         faltante = true;
                     }
-                    if (perfil == null) continue;
-                    BudgetedSupply perfilInsumo = CalcularPerfil(largo, cantidad, perfil.priceSupply, perfil.weigthMetro, codigo, faltante);
-                    insumos.Add(perfilInsumo);
-                    precioProducto += perfilInsumo.Subtotal;
+                    //if (perfil == null) continue;
+                    //BudgetedSupply perfilInsumo = CalcularPerfil(largo, cantidad, perfil.priceSupply, perfil.weigthMetro, codigo, faltante);
+                    //insumos.Add(perfilInsumo);
+                    //precioProducto += perfilInsumo.Subtotal;
                 }
                 else
                 {
