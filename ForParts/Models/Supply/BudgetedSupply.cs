@@ -18,6 +18,6 @@ namespace ForParts.Models.Supply
         public decimal Subtotal { get; set; }
 
         public bool OutOfStock { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

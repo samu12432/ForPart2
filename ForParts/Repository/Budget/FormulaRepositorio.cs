@@ -22,7 +22,8 @@ namespace ForParts.Repository.Budget
                     f.Descripcion == descripcion);
 
             if (formula == null)
-                throw new Exception($"No se encontró fórmula para insumo {codigoInsumo}, serie {seriePerfil}, tipo {tipoProducto}.");
+                formula = Contexto.Formulas.First();
+                //throw new Exception($"No se encontró fórmula para insumo {codigoInsumo}, serie {seriePerfil}, tipo {tipoProducto}.");
 
             return formula;
         }

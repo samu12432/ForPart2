@@ -26,8 +26,6 @@ namespace ForParts.DTO.Product
         public IFormFile? Image { get; set; }
 
         public string? imageUrl { get; set; } = string.Empty;
-
-        [MinLength(1, ErrorMessage = "Debe haber al menos un insumo.")]
         public List<SupplyNecessaryDto> supplies { get; set; } = new();
     }
 }
