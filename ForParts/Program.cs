@@ -21,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using static Microsoft.SqlServer.Management.Sdk.Sfc.RequestObjectInfo;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 using ForParts.IRepository.Invoice;
 using ForParts.Repository.Invoice;
 using ForParts.IRepository.Customer;
@@ -33,6 +34,10 @@ using ForParts.Service.Invoice;
 using ForParts.IService.Product;
 using ForParts.Services.Product;
 using ForParts.Service.Client;
+using ForParts.IRepository.Budget;
+using ForParts.Repository.Budget;
+using ForParts.IService.Buget;
+using ForParts.Service.Buget;
 using ProfileAlias = ForParts.Models.Supply.Profile;
 using ForParts.IService.Buget;
 using ForParts.Services.Budget;
@@ -86,6 +91,10 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.Converters.Add(new ForParts.Converters.DireccionJsonConverter());
     });
 
 builder.Services.AddAuthorization();

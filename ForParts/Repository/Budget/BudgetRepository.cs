@@ -1,11 +1,10 @@
 ﻿using ForParts.Data;
-using ForParts.IRepository;
 using ForParts.IRepository.Budget;
 using ForParts.Models.Budgetes;
 using Microsoft.EntityFrameworkCore;
 using budgets = ForParts.Models.Budgetes.Budget;
 
-namespace ForParts.Repository
+namespace ForParts.Repository.Budget
 {
     public class BudgetRepository : IBudgetRepository
     {

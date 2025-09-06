@@ -41,7 +41,7 @@ namespace ForParts.Models.Supply
 
         public void changeState()
         {
-            this.IsActive = IsActive!;
+            this.IsActive = !IsActive;
             stockUpdate = DateTime.Now;
         }
     }

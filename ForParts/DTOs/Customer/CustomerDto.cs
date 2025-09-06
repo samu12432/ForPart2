@@ -1,24 +1,26 @@
-﻿//using ForParts.Models.Customer;
 using ForParts.Models.Customers;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using ForParts.Converters;
 
 namespace ForParts.DTOs.Customer
 {
-         
-        public class CustomerDto
+    public class CustomerDto
     {
-            [Key]
-            public int CustomerId { get; set; }
+        public int CustomerId { get; set; }
+        
+        public string Nombre { get; set; } = string.Empty;
+        
+        public string? Identificador { get; set; }
+        
+        public string? TipoDocumento { get; set; }
+        
+        public string? Email { get; set; }
+        
+        public string? Telefono { get; set; }
 
-            public string Nombre { get; set; } = string.Empty;
-            public string Identificador { get; set; } = string.Empty;
-            public string TipoDocumento { get; set; } = "RUT";
-            public string Email { get; set; } = string.Empty;
-            public string Telefono { get; set; } = string.Empty;
-
-            public Direccion DireccionFiscal { get; set; } = new();
-        }
+        [JsonConverter(typeof(DireccionJsonConverter))]
+        public Direccion? DireccionFiscal { get; set; }
     }
+}
 
 

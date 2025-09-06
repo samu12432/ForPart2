@@ -19,5 +19,6 @@ namespace ForParts.IRepository.Supply
         Glass GetGlassByType(GlassType tipoVidrio, string espesor);
 
         Task<bool> ExistSupplyById(int supplyid);
+        Task<List<T>> GetAllAsync();
     }
 }

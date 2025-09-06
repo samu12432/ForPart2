@@ -148,8 +148,7 @@ namespace ForParts.Services.Product
         {
             IEnumerable<Products> products = await _productRepository.GetAllAsync();
             if (products == null || !products.Any())
-                throw new ProductException("No hay productos registrados.");
-
+                return new List<ProductDto>().AsEnumerable();
             //Mapeamos los productos a ProductDto
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
             if (productDtos == null || !productDtos.Any())

@@ -40,39 +40,37 @@ namespace ForParts.Services.Budget
             ProductBudgetDto productoAPresupuestar = dto.Producto;
 
             BudgetedProduct productoPresupuestado = new BudgetedProduct();
-         
-                switch (productoAPresupuestar.TypeProduct)
-                {
-                    case ProductType.Ventana:
 
-                        var productoVentana = await CalcularVentana(productoAPresupuestar);
-                        precioTotalPresupuesto += productoVentana.TotalPrice;
-                        productoPresupuestado = productoVentana;
-                        break;
+            switch (productoAPresupuestar.TypeProduct)
+            {
+                case ProductType.Ventana:
 
-                    case ProductType.Puerta:
-                        var productoPuerta = await CalcularPuerta(productoAPresupuestar);
-                        precioTotalPresupuesto += productoPuerta.TotalPrice;
-                        productoPresupuestado = productoPuerta;
-                        break;
+                    var productoVentana = await CalcularVentana(productoAPresupuestar);
+                    precioTotalPresupuesto += productoVentana.TotalPrice;
+                    productoPresupuestado = productoVentana;
+                    break;
 
-                    default:
-                        throw new Exception("El tipo de producto no existe.");
-                }
+                case ProductType.Puerta:
+                    var productoPuerta = await CalcularPuerta(productoAPresupuestar);
+                    precioTotalPresupuesto += productoPuerta.TotalPrice;
+                    productoPresupuestado = productoPuerta;
+                    break;
+
+                default:
+                    throw new Exception("El tipo de producto no existe.");
+            }
 
             var presupuesto = new budgets
             {
                 Customer = new Customer
                 {
-                    Nombre = dto.Cliente.Nombre,
-                    Telefono = dto.Cliente.Telefono,
-                    DireccionFiscal = dto.Cliente.DireccionFiscal,
-                    Identificador = dto.Cliente.Identificador,
-                    TipoDocumento = dto.Cliente.TipoDocumento,
-                    Email = dto.Cliente.Email
-                   
-
-                    },
+                    Nombre = dto.Cliente?.Nombre ?? string.Empty,
+                    Telefono = dto.Cliente?.Telefono ?? string.Empty,
+                    Email = dto.Cliente?.Email ?? string.Empty,
+                    Identificador = dto.Cliente?.Identificador ?? string.Empty,
+                    TipoDocumento = dto.Cliente?.TipoDocumento ?? "RUT",
+                    DireccionFiscal = dto.Cliente?.DireccionFiscal ?? new Direccion()
+                },
 
                 State = StateBudget.Borrador,
                 //Products = productosPresupuestados,
@@ -89,7 +87,7 @@ namespace ForParts.Services.Budget
         private async Task<BudgetedProduct> CalcularVentana(ProductBudgetDto prodDto)
         {
             BudgetedProduct ventana;
-           
+
 
             switch (prodDto.Serie)
             {
@@ -126,7 +124,7 @@ namespace ForParts.Services.Budget
 
             switch (prodDto.Serie)
 
-            
+
             {
                 case SerieProfile.Serie_30:
                     puerta = await CalculadoraPresupuesto.CalcularPresupuestoPuertaMecal30Interior(prodDto);
@@ -134,11 +132,11 @@ namespace ForParts.Services.Budget
                 case SerieProfile.Linea_Probba:
                     puerta = await CalculadoraPresupuesto.CalcularPresupuestoPuertaProbba(prodDto);
                     return puerta;
-              
+
                 default:
                     throw new Exception("Tipo de producto no soportado.");
             }
-            
+
         }
     }
 }

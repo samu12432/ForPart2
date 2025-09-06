@@ -18,7 +18,6 @@ namespace ForParts.DTOs.Supply
         [StringLength(100)]
         public string descriptionSupply { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Es necesario ingresar la imagen.")]
         public IFormFile? Image { get; set; }
 
         public string? imageUrl { get; set; } = string.Empty;

@@ -129,8 +129,6 @@ namespace ForParts.Controllers.Product
             try
             {
                 var products = await _productService.GetAllProductsAsync();
-                if (products == null || !products.Any())
-                    return NotFound(new { status = 404, message = "No hay productos registrados." });
                 return Ok(products);
             }
             catch (ProductException e)

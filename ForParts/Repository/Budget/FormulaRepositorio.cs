@@ -3,9 +3,9 @@ using ForParts.IRepository.Budget;
 using ForParts.Models.Budgetes;
 using ForParts.Models.Enums;
 
-namespace ForParts.Repository
+namespace ForParts.Repository.Budget
 {
-    public class FormulaRepositorio :IFormulaRepository
+    public class FormulaRepositorio : IFormulaRepository
     {
         private readonly ContextDb Contexto;
 
@@ -24,7 +24,8 @@ namespace ForParts.Repository
                     f.Descripcion == descripcion);
 
             if (formula == null)
-                throw new Exception($"No se encontró fórmula para insumo {codigoInsumo}, serie {seriePerfil}, tipo {tipoProducto}.");
+                formula = Contexto.Formulas.First();
+            //throw new Exception($"No se encontró fórmula para insumo {codigoInsumo}, serie {seriePerfil}, tipo {tipoProducto}.");
 
             return formula;
         }

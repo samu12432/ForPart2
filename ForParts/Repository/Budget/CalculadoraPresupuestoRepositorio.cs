@@ -34,13 +34,13 @@ namespace ForParts.Repository.Budget
             IWebHostEnvironment env, IHttpContextAccessor httpContext, ISupplyRepository<Profile> repoProfile,
             ISupplyRepository<Glass> repoVidrio, ISupplyRepository<Accessory> repoAccesorios)
         {
-        RepoFormula = repoFormula;
-        RepoStock = repoStock;
-        this.env = env;
-        this.httpContext = httpContext;
-        _repoProfile = repoProfile;
-        _repoGlass = repoVidrio;
-        _repoAccessory = repoAccesorios;
+            RepoFormula = repoFormula;
+            RepoStock = repoStock;
+            this.env = env;
+            this.httpContext = httpContext;
+            _repoProfile = repoProfile;
+            _repoGlass = repoVidrio;
+            _repoAccessory = repoAccesorios;
         }
 
         //-----------------------VENTANAS
@@ -118,10 +118,10 @@ namespace ForParts.Repository.Budget
             foreach (string codigo in codigosDePerfil)
             {
                 Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
-            //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
-            Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
+                //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+                Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
 
-            decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
+                decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                 int cantidad = codigo switch
                 {
                     "2501" => 2,
@@ -176,16 +176,16 @@ namespace ForParts.Repository.Budget
         }
 
 
-       
+
         public async Task<BudgetedProduct> CalcularPresupuestoVentanaS20(ProductBudgetDto prodDto)
         {
 
             var insumos = new List<BudgetedSupply>();
             decimal precioProducto = 0;
             string[] codigosDePerfil = { "201", "202", "216", "204", "205" };
-        //string[] codigosDePerfil = { "201" };
+            //string[] codigosDePerfil = { "201" };
 
-        foreach (string codigo in codigosDePerfil)
+            foreach (string codigo in codigosDePerfil)
             {
                 Profile perfil = await _repoProfile.GetByCodeAsync(codigo);
 
@@ -216,8 +216,8 @@ namespace ForParts.Repository.Budget
             BudgetedSupply vidrioInsumo = CalcularVidrio(prodDto.GlassType, prodDto.GlassThickness, prodDto.Serie, prodDto.TypeProduct, prodDto.Width, prodDto.Heigth);
             insumos.Add(vidrioInsumo);
             //precioProducto += vidrioInsumo.Subtotal;
-            
-           
+
+
             // Recargo 14% si es negro o blanco
             precioProducto = AplicarRecargoPorColor(prodDto.Color, precioProducto);
             //Calculo de mano de obra
@@ -243,7 +243,7 @@ namespace ForParts.Repository.Budget
 
         }
 
-       
+
 
         //-----------------------PUERTAS
         public async Task<BudgetedProduct> CalcularPresupuestoPuertaS30(ProductBudgetDto prodDto)
@@ -256,8 +256,8 @@ namespace ForParts.Repository.Budget
 
             var insumos = new List<BudgetedSupply>();
             decimal precioProducto = 0;
-            string[] codigosDePerfil = { "307A","307","315", "317","313" };
-          
+            string[] codigosDePerfil = { "307A", "307", "315", "317", "313" };
+
             foreach (string codigo in codigosDePerfil)
             {
                 Profile perfil;
@@ -266,31 +266,38 @@ namespace ForParts.Repository.Budget
                     string codigo307 = "307";
                     perfil = await _repoProfile.GetByCodeAsync(codigo307);
                 }
-                else {
-                     perfil = await _repoProfile.GetByCodeAsync(codigo);
+                else
+                {
+                    perfil = await _repoProfile.GetByCodeAsync(codigo);
                 }
-                    //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
-                    Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
+                //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT
+                Formula formula = RepoFormula.GetFormula(codigo, ((int)prodDto.Serie), ((int)prodDto.TypeProduct), "Largo");
                 decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                 int cantidad = codigo switch
                 {
-                    "307"  => 2,
+                    "307" => 2,
                     "307A" => 1,
-                    "317"  => 2,
-                    "313"  => 1,
-                    "315"  => 1
-                    
+                    "317" => 2,
+                    "313" => 1,
+                    "315" => 1
+
                 };
                 bool faltante = false;
-                if (codigo == "307A") {// se hace esto por que para el perfil 307 se necesitan dos medidas diferentes para la misma abertura
+                if (codigo == "307A")
+                {// se hace esto por que para el perfil 307 se necesitan dos medidas diferentes para la misma abertura
                     string codigo307 = "307";
                     bool tieneSuficienteStock = TieneStockDisponible(codigo307, prodDto.Color, largo, cantidad);
                     if (!tieneSuficienteStock)
                     {
                         faltante = true;
                     }
+                    if (perfil == null) continue;
+                    BudgetedSupply perfilInsumo = CalcularPerfil(largo, cantidad, perfil.priceSupply, perfil.weigthMetro, codigo, faltante);
+                    insumos.Add(perfilInsumo);
+                    precioProducto += perfilInsumo.Subtotal;
                 }
-                else { 
+                else
+                {
                     bool tieneSuficienteStock = TieneStockDisponible(codigo, prodDto.Color, largo, cantidad);
                     if (!tieneSuficienteStock)
                     {
@@ -344,7 +351,8 @@ namespace ForParts.Repository.Budget
                 {
                     string codigo90000 = "90000A";
                     perfil = await _repoProfile.GetByCodeAsync(codigo90000);
-                }else if (codigo == "90008A")
+                }
+                else if (codigo == "90008A")
                 {
                     string codigo90008 = "90008A";
                     perfil = await _repoProfile.GetByCodeAsync(codigo90008);
@@ -359,11 +367,11 @@ namespace ForParts.Repository.Budget
                 decimal largo = EvaluarFormula(formula.Expresion, prodDto.Width, prodDto.Heigth);
                 int cantidad = codigo switch
                 {
-                    "90000"  => 1,
+                    "90000" => 1,
                     "90000A" => 2,
-                    "90008"  => 2,
+                    "90008" => 2,
                     "90008A" => 2,
-                    "92486"  => 1
+                    "92486" => 1
 
                 };
                 bool faltante = false;
@@ -443,7 +451,7 @@ namespace ForParts.Repository.Budget
             throw new NotImplementedException();
         }
 
-        public async Task<BudgetedProduct>  CalcularPresupuestoBatienteProbba(ProductBudgetDto prodDto)
+        public async Task<BudgetedProduct> CalcularPresupuestoBatienteProbba(ProductBudgetDto prodDto)
         {
             throw new NotImplementedException();
         }
@@ -474,7 +482,7 @@ namespace ForParts.Repository.Budget
         }
 
         public async Task<BudgetedProduct> CalcularPresupuestoTabaqueraGala(ProductBudgetDto prodDto)
-        {   
+        {
             throw new NotImplementedException();
         }
 
@@ -656,7 +664,7 @@ namespace ForParts.Repository.Budget
             return venta; // tipo de cambio de venta (USD->UYU)
         }
 
-       
+
     }
 
 

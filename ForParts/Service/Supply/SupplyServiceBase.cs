@@ -77,7 +77,24 @@ namespace ForParts.Services.Supply
             return deleted; 
         }
 
-        public async Task<bool> updateImageSupply(EditImageSupplyDto dto)
+        public async Task<bool> DeleteByCodeAsync(string codeSupply)
+        {
+            return await DeleteSupplyAsync(codeSupply);
+        }
+
+        public async Task<bool> UpdateDescriptionAsync(EditSupplyDto dto)
+        {
+            if (dto == null) throw new SupplyException("No puede estar vacío.");
+
+            var existing = await _repository.GetSupplyByCode(dto.codeSupply);
+            if (existing == null) throw new SupplyException($"No se encontró el suministro con código '{dto.codeSupply}'.");
+
+            existing.descriptionSupply = dto.description;
+
+            return await _repository.UpdateSupply(existing); 
+        }
+
+        public async Task<bool> UpdateImageAsync(EditImageSupplyDto dto)
         {
             if (dto == null)
                 throw new SupplyException("Los datos no pueden estar vacíos.");
@@ -89,16 +106,14 @@ namespace ForParts.Services.Supply
             if (supply == null)
                 throw new SupplyException($"No se encontró el suministro con código '{dto.codeSupply}'.");
 
-            // Guardar nueva imagen
             var imageUrl = await _imageService.SaveImageAsync(dto.Image, "supplies");
 
-            // Actualizar URL en el modelo
             supply.imageUrl = imageUrl;
 
             return await _repository.UpdateSupply(supply);
         }
 
-        public async Task<bool> updatePriceSupply(EditPriceSupplyDto dto)
+        public async Task<bool> UpdatePriceAsync(EditPriceSupplyDto dto)
         {
             if (dto == null)
                 throw new SupplyException("Los datos no pueden estar vacíos.");
@@ -115,17 +130,10 @@ namespace ForParts.Services.Supply
             return await _repository.UpdateSupply(supply);
         }
 
-        public async Task<bool> updateSupply(EditSupplyDto dto)
+        public async Task<List<TDto>> GetAllAsync()
         {
-            if (dto == null) throw new SupplyException("No puede estar vacío.");
-
-            // Aquí se implementaría la lógica para editar el suministro por su código.
-            var existing = await _repository.GetSupplyByCode(dto.codeSupply);
-            if (existing == null) throw CreateAlreadyExistsException();
-
-            existing.descriptionSupply = dto.description;
-
-            return await _repository.UpdateSupply(existing); 
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<List<TDto>>(entities);
         }
 
         protected abstract SupplyException CreateAlreadyExistsException();

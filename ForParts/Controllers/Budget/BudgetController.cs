@@ -5,15 +5,13 @@ using ForParts.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ForParts.Controllers.BudgetC
+namespace ForParts.Controllers.Budget
 {
-
-
-    public class PresupuestoController : Controller
+    public class BudgetController : ControllerBase
     {
         private readonly IBudgetService _budgetService;
 
-        public PresupuestoController(IBudgetService budgetService)
+        public BudgetController(IBudgetService budgetService)
         {
             _budgetService = budgetService;
         }

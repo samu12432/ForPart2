@@ -2,6 +2,7 @@
 using ForParts.DTOs.Auth;
 using ForParts.Exceptions.Auth;
 using ForParts.IService.Auth;
+using ForParts.Models.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForParts.Controllers.Auth
@@ -76,20 +77,25 @@ namespace ForParts.Controllers.Auth
             //Antes de ejecutar la funcion, se realiza la validacion de MODELSTATE correspondiente al Dto
             try
             {
-                var token = await _authService.LoginUser(dto);
+                (string? token, User user) = await _authService.LoginUser(dto);
+                
+                if(user != null)
+                {
+                    user.passwordHash = user.passwordSalt = null;
+                }
 
-                if (token == null)
+                if (string.IsNullOrEmpty(token))
                     return Unauthorized("Credenciales incorretas"); //Codigo 401
 
-                return Ok(new { token }); //Codigo 200
+                return Ok(new { token, user }); //Codigo 200
             }
             catch (InvalidOperationException e)
             {
-                return BadRequest(new { satus = 500, message = e.Message });
+                return BadRequest(new { status = 500, message = e.Message });
             }
             catch (EmailException e)
             {
-                return BadRequest(new { satus = 403, message = e.Message });
+                return BadRequest(new { status = 403, message = e.Message });
             }
         }
 

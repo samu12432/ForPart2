@@ -15,6 +15,7 @@ namespace ForParts.DTOs.Supply
 
         [Required(ErrorMessage = "El tipo de movimiento es obligatorio.")]
         public TypeMovement MovementType { get; set; }
+        public DateTime? MovementDate { get; set; }
 
     }
 }

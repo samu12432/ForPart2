@@ -96,5 +96,13 @@ namespace ForParts.Repositorys.Supply
 
             return vidrio;
         }
+
+        public async Task<List<TEntity>> GetAllAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(x => x.isEnabledSupply == true)
+                .ToListAsync();
+        }
     }
 }
