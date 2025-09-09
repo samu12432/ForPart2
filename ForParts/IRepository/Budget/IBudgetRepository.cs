@@ -7,5 +7,6 @@ namespace ForParts.IRepository.Budget
     public interface IBudgetRepository
     {
         Task<budgets?> Add(budgets presupuesto);
+        Task<budgets?> FindByIdForPdfAsync(int id, CancellationToken ct = default);
     }
 }

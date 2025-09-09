@@ -26,38 +26,46 @@ namespace ForParts.Services.Budget
 
         }
 
-
+        public async Task<budgets?> FindByIdAsync(int id, CancellationToken ct = default)
+        {
+            // delega al repo (AsNoTracking + Includes adentro)
+            return await RepoPresupuesto.FindByIdForPdfAsync(id, ct);
+        }
         //private readonly IBudgetRepository _budgetRepository;
         public async Task<budgets?> CreateBudgetAsync(BudgetCreateDto dto)
         {
-            //Validamos nuevamente que no sea nulo el dto
             if (dto == null)
-                throw new BudgetException("Datos invalidos");
+                throw new BudgetException("Datos inválidos");
 
-            //var productosPresupuestados = new List<BudgetedProduct>();
-            decimal precioTotalPresupuesto = 0;
+            if (dto.Productos == null || dto.Productos.Count == 0)
+                throw new BudgetException("Debe incluir al menos un producto a presupuestar.");
 
-            ProductBudgetDto productoAPresupuestar = dto.Producto;
+            var productosPresupuestados = new List<BudgetedProduct>();
+            decimal precioTotalPresupuesto = 0m;
 
-            BudgetedProduct productoPresupuestado = new BudgetedProduct();
-
-            switch (productoAPresupuestar.TypeProduct)
+            foreach (var producto in dto.Productos)
             {
-                case ProductType.Ventana:
+                switch (producto.TypeProduct)
+                {
+                    case ProductType.Ventana:
+                        {
+                            var ventana = await CalcularVentana(producto);   // devuelve BudgetedProduct
+                            productosPresupuestados.Add(ventana);
+                            precioTotalPresupuesto += ventana.TotalPrice;
+                            break;
+                        }
 
-                    var productoVentana = await CalcularVentana(productoAPresupuestar);
-                    precioTotalPresupuesto += productoVentana.TotalPrice;
-                    productoPresupuestado = productoVentana;
-                    break;
+                    case ProductType.Puerta:
+                        {
+                            var puerta = await CalcularPuerta(producto);     // devuelve BudgetedProduct
+                            productosPresupuestados.Add(puerta);
+                            precioTotalPresupuesto += puerta.TotalPrice;
+                            break;
+                        }
 
-                case ProductType.Puerta:
-                    var productoPuerta = await CalcularPuerta(productoAPresupuestar);
-                    precioTotalPresupuesto += productoPuerta.TotalPrice;
-                    productoPresupuestado = productoPuerta;
-                    break;
-
-                default:
-                    throw new Exception("El tipo de producto no existe.");
+                    default:
+                        throw new BudgetException("El tipo de producto no existe.");
+                }
             }
 
             var presupuesto = new budgets
@@ -73,16 +81,18 @@ namespace ForParts.Services.Budget
                 },
 
                 State = StateBudget.Borrador,
-                //Products = productosPresupuestados,
-                Product = productoPresupuestado,
+                Products = productosPresupuestados,   // <<--- usa lista
                 TotalPrice = precioTotalPresupuesto
             };
 
-            var para_ver_presupuesto = presupuesto;
-            var pr = await RepoPresupuesto.Add(presupuesto);
-            var para_ver = pr;
-            return pr;
+            // Si tu entidad budgets aún tiene la propiedad singular `Product`,
+            // podés dejarla en null o, si querés compatibilidad:
+            // presupuesto.Product = productosPresupuestados.FirstOrDefault();
+
+            var resultado = await RepoPresupuesto.Add(presupuesto);
+            return resultado;
         }
+
 
         private async Task<BudgetedProduct> CalcularVentana(ProductBudgetDto prodDto)
         {
@@ -138,5 +148,6 @@ namespace ForParts.Services.Budget
             }
 
         }
+       
     }
 }

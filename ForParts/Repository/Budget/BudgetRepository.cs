@@ -30,6 +30,21 @@ namespace ForParts.Repository.Budget
             
 
             return presupuesto;
-        } 
+        }
+        public Task<budgets?> FindByIdForPdfAsync(int id, CancellationToken ct = default)
+        {
+            // Si Customer.DireccionFiscal es entidad separada y NO owned, dejá el ThenInclude;
+            // si es owned (OwnsOne), podés quitarlo.
+            // en tu método del repo para PDF
+            return _context.Budgets
+                .AsNoTracking()
+                .Include(b => b.Customer)
+                .ThenInclude(c => c.DireccionFiscal) // quitá si es owned
+                .Include(b => b.Products)
+                .ThenInclude(p => p.SuppliesUsed)    // <<--- importante
+                .FirstOrDefaultAsync(b => b.Id == id, ct);
+
+
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace ForParts.DTOs.Product
         public string Color { get; set; }
         public int amount { get; set; }
 
-        public string GlassThickness { get; set; }
+        public int GlassThickness { get; set; }
         public GlassType GlassType { get; set; }
 
         public ProductType TypeProduct { get; set; }

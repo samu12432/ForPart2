@@ -569,13 +569,13 @@ namespace ForParts.Repository.Budget
             };
         }
 
-        public BudgetedSupply CalcularVidrio(GlassType tipoVidrio, string espesor, SerieProfile serie,
+        public BudgetedSupply CalcularVidrio(GlassType tipoVidrio, int idInsumo, SerieProfile serie,
                 ProductType tipo, decimal ancho, decimal alto)
         {
             // Obtener el vidrio según tipo y espesor
-            Glass vidrio = _repoGlass.GetGlassByType(tipoVidrio, espesor); //CAMBIAR LOGICA DE BUSQUEDA
+            Glass vidrio = _repoGlass.GetGlassByType(tipoVidrio, idInsumo); //CAMBIAR LOGICA DE BUSQUEDA
             if (vidrio == null)
-                throw new Exception($"No se encontró el vidrio '{tipoVidrio}' con espesor '{espesor}'.");
+                throw new Exception($"No se encontró el vidrio '{tipoVidrio}' con espesor '{idInsumo}'.");
 
             // Obtener fórmulas de cálculo de medidas del vidrio
             //Para la formula, llega el enum, pero para acceder a la bd. necesitamos el valor INT

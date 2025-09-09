@@ -45,6 +45,7 @@ using ForParts.IRepository;
 using ForParts.Repository;
 using ForParts.IRepository.Budget;
 using ForParts.Repository.Budget;
+using ForParts.Service.Budget;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,6 +111,7 @@ builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Glass>>();
 builder.Services.AddScoped<ISupplyExisting, SupplyRepository<Accessory>>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IFormulaRepository, FormulaRepositorio>();
+builder.Services.AddScoped<IBudgetPdfService, BudgetPdfService>();
 
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceEmailAuth, EmailAuthService>();

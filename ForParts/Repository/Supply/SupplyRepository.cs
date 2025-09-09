@@ -83,16 +83,16 @@ namespace ForParts.Repositorys.Supply
         }
 
 
-        public Glass GetGlassByType(GlassType tipoVidrio, string espesor)
+        public Glass GetGlassByType(GlassType tipoVidrio, int idInsumo)
         {
             Glass vidrio = _context.Supplies
                 .OfType<Glass>()
                 .FirstOrDefault(v =>
                     v.glassType == tipoVidrio &&
-                    v.glassThickness.ToLower() == espesor.ToLower());
+                    v.idSupply == idInsumo);
 
             if (vidrio == null)
-                throw new GlassException($"No se encontró un vidrio del tipo '{tipoVidrio}' y espesor '{espesor}'.");
+                throw new GlassException($"No se encontró un vidrio del tipo '{tipoVidrio}'.");
 
             return vidrio;
         }

@@ -9,4 +9,7 @@ public interface IBudgetService
 {
     public Task<Budget> CreateBudgetAsync(BudgetCreateDto dto);
 
+    Task<ForParts.Models.Budgetes.Budget?> FindByIdAsync(int id, CancellationToken ct = default);
+    
+
 }

@@ -10,9 +10,10 @@ namespace ForParts.Controllers.Budget
     public class BudgetController : ControllerBase
     {
         private readonly IBudgetService _budgetService;
-
-        public BudgetController(IBudgetService budgetService)
+        private readonly IBudgetPdfService _pdf;
+        public BudgetController(IBudgetService budgetService, IBudgetPdfService pdf)
         {
+            _pdf = pdf;
             _budgetService = budgetService;
         }
 
@@ -34,6 +35,20 @@ namespace ForParts.Controllers.Budget
             {
                 return BadRequest(new { mensaje = ex.Message });
             }
+        }
+        [HttpGet("{id}/pdf")]
+        public async Task<IActionResult> GetPdf(int id, CancellationToken ct)
+        {
+            var b = await _budgetService.FindByIdAsync(id, ct);
+            if (b == null) return NotFound();
+
+            var pdf = _pdf.Generate(b);
+
+            // Permite que front/Swagger lean el nombre del archivo
+            Response.Headers.Append("Access-Control-Expose-Headers", "Content-Disposition");
+
+            var fileName = $"Presupuesto-{id}.pdf";
+            return File(pdf, "application/pdf", fileName);
         }
 
 
