@@ -284,7 +284,7 @@ namespace ForParts.Controllers.Supply
                         });
                     }
                     break;
-
+                    
                 case TypeSupply.Glass:
                     var glassSupplies = await _glassService.GetAllAsync();
                     foreach (var supply in glassSupplies)
@@ -318,7 +318,7 @@ namespace ForParts.Controllers.Supply
                         });
                     }
                     break;
-
+                    
                 default:
                     throw new InvalidOperationException("Tipo de insumo no válido.");
             }

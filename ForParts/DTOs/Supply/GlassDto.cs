@@ -30,8 +30,9 @@ namespace ForParts.DTOs.Supply
         public decimal priceSupply { get; set; }
         //___________________________________________________//
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
-        public decimal glassThickness { get; set; }
+        [Required(ErrorMessage = "Es necesario ingresar el espesor del vidrio")]
+        [StringLength(20)]
+        public string glassThickness { get; set; }
 
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que cero.")]
         public decimal glassLength { get; set; }

@@ -55,9 +55,17 @@ namespace ForParts.Service.Auth
             //Accedemos a la Db y guardamos
             await _userRepository.AddAsync(newUser);
 
-            //Se envia un mail de forma asicronica al progrma, para que el cliente verifique que existe realmente
+            // Se genera el token
             var token = GenerateEmailToken(newUser.userEmail);
-            var link = $"https://localhost:7241/api/auth/confirm-email?token={token}";
+
+            // 🔴 hoy estás armando la URL así (sin encoding):
+            // var link = $"https://api.edaberturas.lat/api/auth/confirm-email?token={token}";
+
+            // 🟢 debería ser así, con encoding:
+            var encoded = Uri.EscapeDataString(token);
+            var link = $"https://api.edaberturas.lat/api/auth/confirm-email?token={encoded}";
+
+            // Texto del mail
             var body = $"Hola {newUser.userName}, haz clic aquí para confirmar tu correo: <a href='{link}'>Confirmar</a>";
 
             _ = Task.Run(() => _emailSender.SendAsync(
