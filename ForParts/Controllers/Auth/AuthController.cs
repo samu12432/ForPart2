@@ -50,7 +50,7 @@ namespace ForParts.Controllers.Auth
 
         }
 
-        [HttpPost("confirm-email")]
+        [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfrimEmailDto token)
         {
             try
