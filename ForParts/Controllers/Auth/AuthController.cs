@@ -1,12 +1,15 @@
-﻿using System.Diagnostics;
-using ForParts.DTOs.Auth;
+﻿using ForParts.DTOs.Auth;
 using ForParts.Exceptions.Auth;
 using ForParts.IService.Auth;
 using ForParts.Models.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+
 
 namespace ForParts.Controllers.Auth
 {
+   
     public class AuthController : Controller
     {
         private readonly IServiceAuth _authService;
@@ -15,6 +18,7 @@ namespace ForParts.Controllers.Auth
         {
             _authService = authService;
         }
+        
 
         [HttpPost("registroUsuario")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterDto dto)
@@ -50,8 +54,22 @@ namespace ForParts.Controllers.Auth
             }
 
         }
+        [AllowAnonymous]
+        [HttpGet("/api/auth/confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return BadRequest("Token requerido.");
+            var ok = await _authService.ConfirmEmailAsync(token);
+            if (!ok) return BadRequest("Token inválido o expirado.");
 
-        [HttpPost("confirm-email")]
+            // Redirigí a una vista del front si querés mostrar un mensaje
+            return Ok("Email confirmado");
+            // return Redirect("https://front.edaberturas.lat/confirmacion-exitosa");
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("/api/auth/confirm-email")]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfrimEmailDto token)
         {
             try

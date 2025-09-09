@@ -1,4 +1,4 @@
-services:
+﻿services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver
@@ -8,28 +8,29 @@ services:
       MSSQL_PID: "Developer"
       MSSQL_TCP_PORT: "1433"
     ports:
-      - "1433:1433"            
+      - "1433:1433"
     volumes:
       - mssql-data:/var/opt/mssql
-    
-    networks:
-      - appnet
+    networks: [appnet]
 
   api:
     image: shober18/forparts
     container_name: forparts-api
-    depends_on:
-      - sqlserver
-        #condition: service_healthy
+    depends_on: [sqlserver]
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
-      
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};Encrypt=true;TrustServerCertificate=true;MultipleActiveResultSets=true"
+      ports : "7241:8080" # SIN ports aquí (liberamos el 80 para el frontend)
+    networks: [appnet]
+
+  frontend:
+    image: shober18/forparts-frontend:v2025-09-08   # o :latest
+    container_name: forparts-web
+    depends_on: [api]
     ports:
-      - "${API_PORT}:8080" 
-    networks:
-      - appnet
+      - "80:80"     # el front publica el 80 del host
+    networks: [appnet]
 
 volumes:
   mssql-data:

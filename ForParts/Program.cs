@@ -124,6 +124,15 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IBudgetCalculator, CalculadoraPresupuestoRepositorio>();
 
+// Política CORS "OpenCors" (permite cualquier origen, header y método)
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("OpenCors", p => p
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
+});
 
 
 // Registrar IHttpClientFactory
@@ -147,8 +156,12 @@ app.UseStaticFiles(); //USO DE IMAGENES
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
-
+app.UseCors("OpenCors");       // <-- aplica CORS abierto
+// Manejo genérico de preflight (OPTIONS) si tu app no los mapea
+app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok())
+   .RequireCors("OpenCors");
+app.UseRouting();
+//app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -156,3 +169,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+
+

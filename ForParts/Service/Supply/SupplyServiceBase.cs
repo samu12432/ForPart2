@@ -133,6 +133,7 @@ namespace ForParts.Services.Supply
         public async Task<List<TDto>> GetAllAsync()
         {
             var entities = await _repository.GetAllAsync();
+            Console.WriteLine(entities.GetType());
             return _mapper.Map<List<TDto>>(entities);
         }
 

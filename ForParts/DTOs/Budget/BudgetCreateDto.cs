@@ -7,7 +7,7 @@ namespace ForParts.DTOs.Budget
     public class BudgetCreateDto
     {
 
-        public ProductBudgetDto Producto { get; set; }
+        public ProductBudgetDto Producto { get; set; } = new ProductBudgetDto();
         [Required(ErrorMessage = "El cliente es requerido")]
         public CustomerDto Cliente { get; set; } = new CustomerDto();
 

@@ -26,7 +26,7 @@ namespace ForParts.JWT
                 {
                     new Claim(ClaimTypes.Email, user.userEmail)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(999), //Validez del Token por 10 min
+                Expires = DateTime.UtcNow.AddMinutes(540), //Validez del Token por 9 hs
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature
