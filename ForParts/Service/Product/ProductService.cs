@@ -193,7 +193,21 @@ namespace ForParts.Services.Product
         }
 
 
+        //Page
+        public async Task<IEnumerable<ProductWebDto>> GetAllProductsAsyncSimple()
+        {
+            IEnumerable<Products?> products = await _productRepository.GetAllAsync();
+            if (products == null || !products.Any())
+                throw new ProductException("No hay productos registrados.");
 
+            //Mapeamos los productos a ProductDto
+            var productDtos = _mapper.Map<IEnumerable<ProductWebDto>>(products);
+            if (productDtos == null || !productDtos.Any())
+                throw new ProductException("Error al mapear los productos.");
+
+            //Retornamos la lista de productos
+            return productDtos;
+        }
 
 
 
