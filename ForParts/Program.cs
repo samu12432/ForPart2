@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using ForParts.Data;
 using ForParts.DTOs.Supply;
 using ForParts.IRepository.Auth;
@@ -126,16 +126,18 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<IBudgetCalculator, CalculadoraPresupuestoRepositorio>();
 
-// Pol�tica CORS "OpenCors" (permite cualquier origen, header y m�todo)
-builder.Services.AddCors(opt =>
+
+
+const string CorsFront = "CorsFront";
+builder.Services.AddCors(options =>
 {
-    opt.AddPolicy("OpenCors", p => p
-        .AllowAnyOrigin()
+    options.AddPolicy(CorsFront, policy => policy
+        .WithOrigins("https://front.edaberturas.lat")   // agregá localhost si lo usás
         .AllowAnyHeader()
         .AllowAnyMethod()
+    // .AllowCredentials() // solo si usás cookies/sesión
     );
 });
-
 
 // Registrar IHttpClientFactory
 builder.Services.AddHttpClient();
@@ -158,11 +160,12 @@ app.UseStaticFiles(); //USO DE IMAGENES
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseCors("OpenCors");       // <-- aplica CORS abierto
-// Manejo gen�rico de preflight (OPTIONS) si tu app no los mapea
+//app.UseCors("OpenCors");       // <-- aplica CORS abierto
+// Manejo genérico de preflight (OPTIONS) si tu app no los mapea
 app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok())
    .RequireCors("OpenCors");
 app.UseRouting();
+app.UseCors(CorsFront);
 //app.UseAuthentication();
 app.UseHttpsRedirection();
 
