@@ -5,6 +5,7 @@ using ForParts.Models.Enums;
 using ProductAlias = ForParts.Models.Product.Product;
 using Microsoft.EntityFrameworkCore;
 using InvoiceAlias = ForParts.Models.Invoice.Invoice;
+using ForParts.Exceptions.Invoice;
 
 
 namespace ForParts.Repository.Invoice
@@ -55,7 +56,11 @@ namespace ForParts.Repository.Invoice
 
         public async Task UpdateAsync(InvoiceAlias invoice)
         {
-            _context.Invoices.Update(invoice);
+            var existing = await _context.Invoices.FindAsync(invoice.InvoiceId);
+            if (existing == null)
+                throw new InvoiceException("No se encontró la factura para actualizar.");
+
+            _context.Entry(existing).CurrentValues.SetValues(invoice);
             await _context.SaveChangesAsync();
         }
 
