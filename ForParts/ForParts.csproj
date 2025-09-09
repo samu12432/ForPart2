@@ -28,7 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Mappers\Invoice\" />
 		<Folder Include="Models\Utils\" />
 		<Folder Include="wwwroot\imgs\products\" />
 	</ItemGroup>
