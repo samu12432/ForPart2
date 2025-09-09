@@ -97,6 +97,10 @@ namespace ForParts.Controllers.Auth
             {
                 return BadRequest(new { status = 403, message = e.Message });
             }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
     }
