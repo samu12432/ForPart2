@@ -11,5 +11,6 @@ namespace ForParts.IRepository.Invoice
         Task<InvoiceAlias> GetByIdWithItemsAsync(int invoiceId);
         Task<IEnumerable<ProductAlias>> GetFacturadosByProductIds(List<int> productsId);
         Task<bool> IsProductInto(string codeProduct);
+        Task UpdateAsync(InvoiceAlias invoice);
     }
 }

@@ -4,6 +4,6 @@ namespace ForParts.IService.Client
 {
     public interface IZureoInvoiceService
     {
-        Task<ZureoResponseDto> EmitirAsync(InvoiceAlias invoice);
+        Task<ZureoResponseDto?> EmitirFacturaAsync(int id);
     }
 }

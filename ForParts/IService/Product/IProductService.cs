@@ -12,6 +12,7 @@ namespace ForParts.IService.Product
         Task<bool> DeleteProductAsync(string codeProduct);
         Task<IEnumerable<ProductMovementDto>> GetAllProductMovements();
         Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<IEnumerable<ProductWebDto>> GetAllProductsAsyncSimple();
         Task<ProductAlias> GetProductByCode(string codeProduct);
         Task<List<SupplyNecessaryDto>> GetSuppliesForProducts(string codeProduct);
         Task<bool> UpdateDescriptionProductAsync(UpdateDescriptionProductDto dto);

@@ -207,5 +207,26 @@ namespace ForParts.Controllers.Product
                 return BadRequest(new { status = 500, message = "Error inesperado: " + e.Message });
             }
         }
+
+        //OBTENER INSUMOS PARA LA WEB SIN NECESIDAD DE TOKEN
+        [HttpGet("obtenerProductosParaLaWeb")]
+        public async Task<IActionResult> GetAllProductsForWeb()
+        {
+            try
+            {
+                var products = await _productService.GetAllProductsAsyncSimple();
+                if (products == null || !products.Any())
+                    return NotFound(new { status = 404, message = "No hay productos registrados." });
+                return Ok(products);
+            }
+            catch (ProductException e)
+            {
+                return BadRequest(new { status = 500, message = "Error interno del servidor: " + e.Message });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { status = 500, message = "Error inesperado: " + e.Message });
+            }
+        }
     }
 }
