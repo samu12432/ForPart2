@@ -128,16 +128,28 @@ builder.Services.AddScoped<IBudgetCalculator, CalculadoraPresupuestoRepositorio>
 
 
 
+// --- CORS: una sola política coherente ---
 const string CorsFront = "CorsFront";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsFront, policy => policy
-        .WithOrigins("https://front.edaberturas.lat")   // agregá localhost si lo usás
+       .WithOrigins(
+            "https://front.edaberturas.lat",
+            "http://localhost:5175",
+            "https://localhost:7001",
+            "http://localhost:7000",
+            "http://localhost:41245",
+            "https://localhost:44336"
+)
+
         .AllowAnyHeader()
         .AllowAnyMethod()
-    // .AllowCredentials() // solo si usás cookies/sesión
+    // .AllowCredentials() // Habilitalo SOLO si usás cookies/sesión desde el front
     );
 });
+
+
 
 // Registrar IHttpClientFactory
 builder.Services.AddHttpClient();
@@ -162,8 +174,6 @@ app.UseSwagger();
 app.UseSwaggerUI();
 //app.UseCors("OpenCors");       // <-- aplica CORS abierto
 // Manejo genérico de preflight (OPTIONS) si tu app no los mapea
-app.MapMethods("{*path}", new[] { "OPTIONS" }, () => Results.Ok())
-   .RequireCors("OpenCors");
 app.UseRouting();
 app.UseCors(CorsFront);
 //app.UseAuthentication();

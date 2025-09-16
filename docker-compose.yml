@@ -14,22 +14,24 @@
     networks: [appnet]
 
   api:
-    image: shober18/forparts
-    container_name: forparts-api
-    depends_on: [sqlserver]
+    image: shober18/forparts-api:202509152138   # <-- usa tu TAG (o :ultimo si querés)
+    container_name: forparts-api                # (puedes quitarlo para evitar choques)
+    depends_on:
+      - sqlserver
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       ASPNETCORE_URLS: "http://+:8080"
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};Encrypt=true;TrustServerCertificate=true;MultipleActiveResultSets=true"
-      ports : "7241:8080" # SIN ports aquí (liberamos el 80 para el frontend)
+    # No hace falta publicar puertos: el front accede por la red a http://forparts-api:8080
     networks: [appnet]
 
   frontend:
-    image: shober18/forparts-frontend:ultimo  # o :latest
-    container_name: forparts-web
-    depends_on: [api]
+    image: shober18/forparts-frontend:ultimo    # o tu tag timestamp
+    container_name: forparts-web                # (puedes quitarlo si preferís)
+    depends_on:
+      - api
     ports:
-      - "80:80"     # el front publica el 80 del host
+      - "80:80"                                 # el front expone el puerto 80 del host
     networks: [appnet]
 
 volumes:
